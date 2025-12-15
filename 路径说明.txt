@@ -1,0 +1,11 @@
+安装包路径：
+D:\xiangmuuuuuuuuu\entry\build\default\outputs\default
+
+图片等文件路径：
+D:\xiangmuuuuuuuuu\entry\src\main\resources\base\media
+
+软件名称和logo更换：
+D:\xiangmuuuuuuuuu\AppScope\resources\base
+
+主程序index.ets:
+D:\xiangmuuuuuuuuu\entry\src\main\ets\pages

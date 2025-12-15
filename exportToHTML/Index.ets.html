@@ -1,0 +1,622 @@
+<html>
+<head>
+<title>Index.ets</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #bbb529;}
+.s3 { color: #faa23d;}
+.s4 { color: #e2da90;}
+.s5 { color: #db7e9b;}
+.s6 { color: #b3e54c;}
+.s7 { color: #aa7dfc;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Index.ets</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * 贪吃蛇游戏 - 带难度选择和关卡系统版本 
+ */</span>
+
+<span class="s2">@</span><span class="s1">Entry</span>
+<span class="s2">@</span><span class="s1">Component</span>
+<span class="s1">struct Index </span><span class="s3">{</span>
+  <span class="s0">// 游戏状态</span>
+  <span class="s2">@</span><span class="s1">State snake</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s5">[</span><span class="s1">number</span><span class="s4">, </span><span class="s1">number</span><span class="s5">]</span><span class="s4">&gt; = </span><span class="s5">[[</span><span class="s6">5</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">4</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">3</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]]</span>
+  <span class="s2">@</span><span class="s1">State food</span><span class="s4">: </span><span class="s5">[</span><span class="s1">number</span><span class="s4">, </span><span class="s1">number</span><span class="s5">] </span><span class="s4">= </span><span class="s5">[</span><span class="s6">10</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span>
+  <span class="s2">@</span><span class="s1">State dir</span><span class="s4">: </span><span class="s1">string </span><span class="s4">= </span><span class="s7">'right'</span>
+  <span class="s2">@</span><span class="s1">State gameOver</span><span class="s4">: </span><span class="s1">boolean </span><span class="s4">= </span><span class="s1">false</span>
+  <span class="s2">@</span><span class="s1">State score</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">0</span>
+  <span class="s2">@</span><span class="s1">State paused</span><span class="s4">: </span><span class="s1">boolean </span><span class="s4">= </span><span class="s1">false</span>
+  <span class="s2">@</span><span class="s1">State message</span><span class="s4">: </span><span class="s1">string </span><span class="s4">= </span><span class="s7">'《玉散江作业》贪吃蛇'</span>
+  <span class="s2">@</span><span class="s1">State difficulty</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">5 </span><span class="s0">// 默认难度为5（1-10级）</span>
+  <span class="s2">@</span><span class="s1">State isSelectingDifficulty</span><span class="s4">: </span><span class="s1">boolean </span><span class="s4">= </span><span class="s1">true </span><span class="s0">// 是否正在选择难度</span>
+  <span class="s2">@</span><span class="s1">State foodEaten</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">0 </span><span class="s0">// 已吃食物数量</span>
+  <span class="s2">@</span><span class="s1">State levelComplete</span><span class="s4">: </span><span class="s1">boolean </span><span class="s4">= </span><span class="s1">false </span><span class="s0">// 关卡是否完成</span>
+  <span class="s2">@</span><span class="s1">State maxFoodTarget</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">5 </span><span class="s0">// 食物目标数量</span>
+
+  <span class="s0">// 游戏配置</span>
+  <span class="s1">gridSize</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">15</span>
+  <span class="s1">cellSize</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">18</span>
+  <span class="s1">gameSpeed</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">300 </span><span class="s0">// 根据难度调整</span>
+  <span class="s1">timerId</span><span class="s4">: </span><span class="s1">number </span><span class="s4">= </span><span class="s6">0</span>
+
+  <span class="s0">// 存储每个格子的状态</span>
+  <span class="s2">@</span><span class="s1">State gridData</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s1">string</span><span class="s4">&gt;&gt; = </span><span class="s5">[]</span>
+
+  <span class="s0">// 难度配置：级别越高，速度越快</span>
+  <span class="s1">difficultySpeeds</span><span class="s4">: </span><span class="s1">number</span><span class="s5">[] </span><span class="s4">= </span><span class="s5">[</span><span class="s6">500</span><span class="s4">, </span><span class="s6">450</span><span class="s4">, </span><span class="s6">400</span><span class="s4">, </span><span class="s6">350</span><span class="s4">, </span><span class="s6">300</span><span class="s4">, </span><span class="s6">250</span><span class="s4">, </span><span class="s6">200</span><span class="s4">, </span><span class="s6">150</span><span class="s4">, </span><span class="s6">100</span><span class="s4">, </span><span class="s6">50</span><span class="s5">]</span>
+
+  <span class="s0">// 生命周期</span>
+  <span class="s1">aboutToAppear</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s1">aboutToDisappear</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 开始游戏</span>
+  <span class="s1">startGame</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+
+    <span class="s0">// 根据难度设置速度</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameSpeed </span><span class="s4">= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficultySpeeds</span><span class="s5">[</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">- </span><span class="s6">1</span><span class="s5">]</span>
+
+    <span class="s0">// 设置关卡目标</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget </span><span class="s4">= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">&lt;= </span><span class="s6">5 </span><span class="s4">? </span><span class="s6">5 </span><span class="s4">: </span><span class="s6">10</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">= </span><span class="s1">setInterval</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s3">{</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s4">!</span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">&amp;&amp; !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">&amp;&amp; !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">&amp;&amp; !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">this</span><span class="s4">.</span><span class="s1">moveSnake</span><span class="s5">()</span>
+      <span class="s3">}</span>
+    <span class="s3">}</span><span class="s4">, </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameSpeed</span><span class="s5">)</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 移动蛇</span>
+  <span class="s1">moveSnake</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s1">return</span>
+
+    <span class="s0">// 获取蛇头</span>
+    <span class="s1">let headX </span><span class="s4">= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s6">0</span><span class="s5">][</span><span class="s6">0</span><span class="s5">]</span>
+    <span class="s1">let headY </span><span class="s4">= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s6">0</span><span class="s5">][</span><span class="s6">1</span><span class="s5">]</span>
+
+    <span class="s0">// 移动方向</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'up'</span><span class="s5">) </span><span class="s1">headY </span><span class="s4">-= </span><span class="s6">1</span>
+    <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'down'</span><span class="s5">) </span><span class="s1">headY </span><span class="s4">+= </span><span class="s6">1</span>
+    <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'left'</span><span class="s5">) </span><span class="s1">headX </span><span class="s4">-= </span><span class="s6">1</span>
+    <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'right'</span><span class="s5">) </span><span class="s1">headX </span><span class="s4">+= </span><span class="s6">1</span>
+
+    <span class="s0">// 检查碰撞</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">headX </span><span class="s4">&lt; </span><span class="s6">0 </span><span class="s4">|| </span><span class="s1">headX </span><span class="s4">&gt;= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize </span><span class="s4">|| </span><span class="s1">headY </span><span class="s4">&lt; </span><span class="s6">0 </span><span class="s4">|| </span><span class="s1">headY </span><span class="s4">&gt;= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">endGame</span><span class="s5">()</span>
+      <span class="s1">return</span>
+    <span class="s3">}</span>
+
+    <span class="s0">// 检查是否撞到自己</span>
+    <span class="s1">for </span><span class="s5">(</span><span class="s1">let i </span><span class="s4">= </span><span class="s6">0</span><span class="s4">; </span><span class="s1">i </span><span class="s4">&lt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s4">.</span><span class="s1">length</span><span class="s4">; </span><span class="s1">i</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">0</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">headX </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">1</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">headY</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">this</span><span class="s4">.</span><span class="s1">endGame</span><span class="s5">()</span>
+        <span class="s1">return</span>
+      <span class="s3">}</span>
+    <span class="s3">}</span>
+
+    <span class="s0">// 创建新蛇</span>
+    <span class="s1">let newSnake</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s5">[</span><span class="s1">number</span><span class="s4">, </span><span class="s1">number</span><span class="s5">]</span><span class="s4">&gt; = </span><span class="s5">[[</span><span class="s1">headX</span><span class="s4">, </span><span class="s1">headY</span><span class="s5">]</span><span class="s4">, ...</span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">]</span>
+
+    <span class="s0">// 检查是否吃到食物</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">headX </span><span class="s4">=== </span><span class="s1">this</span><span class="s4">.</span><span class="s1">food</span><span class="s5">[</span><span class="s6">0</span><span class="s5">] </span><span class="s4">&amp;&amp; </span><span class="s1">headY </span><span class="s4">=== </span><span class="s1">this</span><span class="s4">.</span><span class="s1">food</span><span class="s5">[</span><span class="s6">1</span><span class="s5">]) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">score </span><span class="s4">+= </span><span class="s6">10</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">+= </span><span class="s6">1</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">`分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">} </span><span class="s7">| 难度: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级 | 食物: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten</span><span class="s3">}</span><span class="s7">/</span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget</span><span class="s3">}</span><span class="s7">`</span>
+
+      <span class="s0">// 检查是否完成关卡</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">&gt;= </span><span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">this</span><span class="s4">.</span><span class="s1">completeLevel</span><span class="s5">()</span>
+        <span class="s1">return</span>
+      <span class="s3">}</span>
+
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">generateFood</span><span class="s5">(</span><span class="s1">newSnake</span><span class="s5">)</span>
+    <span class="s3">} </span><span class="s1">else </span><span class="s3">{</span>
+      <span class="s1">newSnake</span><span class="s4">.</span><span class="s1">pop</span><span class="s5">()</span>
+    <span class="s3">}</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">snake </span><span class="s4">= </span><span class="s1">newSnake</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 生成食物</span>
+  <span class="s1">generateFood</span><span class="s5">(</span><span class="s1">snake</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s5">[</span><span class="s1">number</span><span class="s4">, </span><span class="s1">number</span><span class="s5">]</span><span class="s4">&gt;</span><span class="s5">) </span><span class="s3">{</span>
+    <span class="s1">let newFood</span><span class="s4">: </span><span class="s5">[</span><span class="s1">number</span><span class="s4">, </span><span class="s1">number</span><span class="s5">] </span><span class="s4">= </span><span class="s5">[</span><span class="s6">7</span><span class="s4">, </span><span class="s6">7</span><span class="s5">] </span><span class="s0">// 默认值</span>
+    <span class="s1">let attempts </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">let found </span><span class="s4">= </span><span class="s1">false</span>
+
+    <span class="s1">while </span><span class="s5">(</span><span class="s4">!</span><span class="s1">found </span><span class="s4">&amp;&amp; </span><span class="s1">attempts </span><span class="s4">&lt; </span><span class="s6">100</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">newFood </span><span class="s4">= </span><span class="s5">[</span>
+        <span class="s1">Math</span><span class="s4">.</span><span class="s1">floor</span><span class="s5">(</span><span class="s1">Math</span><span class="s4">.</span><span class="s1">random</span><span class="s5">() </span><span class="s4">* </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize</span><span class="s5">)</span><span class="s4">,</span>
+        <span class="s1">Math</span><span class="s4">.</span><span class="s1">floor</span><span class="s5">(</span><span class="s1">Math</span><span class="s4">.</span><span class="s1">random</span><span class="s5">() </span><span class="s4">* </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize</span><span class="s5">)</span>
+      <span class="s5">]</span>
+
+      <span class="s1">found </span><span class="s4">= </span><span class="s1">true</span>
+      <span class="s1">for </span><span class="s5">(</span><span class="s1">let i </span><span class="s4">= </span><span class="s6">0</span><span class="s4">; </span><span class="s1">i </span><span class="s4">&lt; </span><span class="s1">snake</span><span class="s4">.</span><span class="s1">length</span><span class="s4">; </span><span class="s1">i</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">if </span><span class="s5">(</span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">0</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">newFood</span><span class="s5">[</span><span class="s6">0</span><span class="s5">] </span><span class="s4">&amp;&amp; </span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">1</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">newFood</span><span class="s5">[</span><span class="s6">1</span><span class="s5">]) </span><span class="s3">{</span>
+          <span class="s1">found </span><span class="s4">= </span><span class="s1">false</span>
+          <span class="s1">break</span>
+        <span class="s3">}</span>
+      <span class="s3">}</span>
+
+      <span class="s1">attempts</span><span class="s4">++</span>
+    <span class="s3">}</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">food </span><span class="s4">= </span><span class="s1">newFood</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 更新网格数据</span>
+  <span class="s1">updateGrid</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">let newGrid</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s1">string</span><span class="s4">&gt;&gt; = </span><span class="s5">[]</span>
+
+    <span class="s1">for </span><span class="s5">(</span><span class="s1">let row </span><span class="s4">= </span><span class="s6">0</span><span class="s4">; </span><span class="s1">row </span><span class="s4">&lt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize</span><span class="s4">; </span><span class="s1">row</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">let rowData</span><span class="s4">: </span><span class="s1">Array</span><span class="s4">&lt;</span><span class="s1">string</span><span class="s4">&gt; = </span><span class="s5">[]</span>
+      <span class="s1">for </span><span class="s5">(</span><span class="s1">let col </span><span class="s4">= </span><span class="s6">0</span><span class="s4">; </span><span class="s1">col </span><span class="s4">&lt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridSize</span><span class="s4">; </span><span class="s1">col</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">let cellType </span><span class="s4">= </span><span class="s7">'empty'</span>
+
+        <span class="s0">// 检查是否是蛇头</span>
+        <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s4">.</span><span class="s1">length </span><span class="s4">&gt; </span><span class="s6">0 </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s6">0</span><span class="s5">][</span><span class="s6">0</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">col </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s6">0</span><span class="s5">][</span><span class="s6">1</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">row</span><span class="s5">) </span><span class="s3">{</span>
+          <span class="s1">cellType </span><span class="s4">= </span><span class="s7">'snakeHead'</span>
+        <span class="s3">}</span>
+        <span class="s0">// 检查是否是蛇身</span>
+        <span class="s1">else </span><span class="s3">{</span>
+          <span class="s1">let isSnake </span><span class="s4">= </span><span class="s1">false</span>
+          <span class="s1">for </span><span class="s5">(</span><span class="s1">let i </span><span class="s4">= </span><span class="s6">1</span><span class="s4">; </span><span class="s1">i </span><span class="s4">&lt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s4">.</span><span class="s1">length</span><span class="s4">; </span><span class="s1">i</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+            <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">0</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">col </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">snake</span><span class="s5">[</span><span class="s1">i</span><span class="s5">][</span><span class="s6">1</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">row</span><span class="s5">) </span><span class="s3">{</span>
+              <span class="s1">cellType </span><span class="s4">= </span><span class="s7">'snakeBody'</span>
+              <span class="s1">isSnake </span><span class="s4">= </span><span class="s1">true</span>
+              <span class="s1">break</span>
+            <span class="s3">}</span>
+          <span class="s3">}</span>
+
+          <span class="s0">// 检查是否是食物</span>
+          <span class="s1">if </span><span class="s5">(</span><span class="s4">!</span><span class="s1">isSnake </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">food</span><span class="s5">[</span><span class="s6">0</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">col </span><span class="s4">&amp;&amp; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">food</span><span class="s5">[</span><span class="s6">1</span><span class="s5">] </span><span class="s4">=== </span><span class="s1">row</span><span class="s5">) </span><span class="s3">{</span>
+            <span class="s1">cellType </span><span class="s4">= </span><span class="s7">'food'</span>
+          <span class="s3">}</span>
+        <span class="s3">}</span>
+
+        <span class="s1">rowData</span><span class="s4">.</span><span class="s1">push</span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">)</span>
+      <span class="s3">}</span>
+      <span class="s1">newGrid</span><span class="s4">.</span><span class="s1">push</span><span class="s5">(</span><span class="s1">rowData</span><span class="s5">)</span>
+    <span class="s3">}</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gridData </span><span class="s4">= </span><span class="s1">newGrid</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 完成关卡</span>
+  <span class="s1">completeLevel</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete </span><span class="s4">= </span><span class="s1">true</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">`恭喜！完成第</span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级关卡`</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 结束游戏</span>
+  <span class="s1">endGame</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">= </span><span class="s1">true</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">'游戏结束'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 改变方向 - 修改为立即响应</span>
+  <span class="s1">changeDirection</span><span class="s5">(</span><span class="s1">newDir</span><span class="s4">: </span><span class="s1">string</span><span class="s5">) </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s1">return</span>
+
+    <span class="s0">// 允许立即改变方向，不需要等待</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'up' </span><span class="s4">&amp;&amp; </span><span class="s1">newDir </span><span class="s4">!== </span><span class="s7">'down'</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s1">newDir</span>
+    <span class="s3">} </span><span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'down' </span><span class="s4">&amp;&amp; </span><span class="s1">newDir </span><span class="s4">!== </span><span class="s7">'up'</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s1">newDir</span>
+    <span class="s3">} </span><span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'left' </span><span class="s4">&amp;&amp; </span><span class="s1">newDir </span><span class="s4">!== </span><span class="s7">'right'</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s1">newDir</span>
+    <span class="s3">} </span><span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">=== </span><span class="s7">'right' </span><span class="s4">&amp;&amp; </span><span class="s1">newDir </span><span class="s4">!== </span><span class="s7">'left'</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s1">newDir</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 选择难度并开始游戏</span>
+  <span class="s1">startWithDifficulty</span><span class="s5">(</span><span class="s1">level</span><span class="s4">: </span><span class="s1">number</span><span class="s5">) </span><span class="s3">{</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">= </span><span class="s1">level</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">score </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">startGame</span><span class="s5">()</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">`分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">} </span><span class="s7">| 难度: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级 | 食物: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten</span><span class="s3">}</span><span class="s7">/</span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget</span><span class="s3">}</span><span class="s7">`</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 返回难度选择</span>
+  <span class="s1">backToDifficultySelection</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">snake </span><span class="s4">= </span><span class="s5">[[</span><span class="s6">5</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">4</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">3</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">food </span><span class="s4">= </span><span class="s5">[</span><span class="s6">10</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s7">'right'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">score </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">'《玉散江作业》贪吃蛇'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">= </span><span class="s1">true</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 重置游戏</span>
+  <span class="s1">resetGame</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId </span><span class="s4">&gt; </span><span class="s6">0</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">clearInterval</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">timerId</span><span class="s5">)</span>
+    <span class="s3">}</span>
+
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">snake </span><span class="s4">= </span><span class="s5">[[</span><span class="s6">5</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">4</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">3</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">food </span><span class="s4">= </span><span class="s5">[</span><span class="s6">10</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s7">'right'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">score </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">= </span><span class="s1">true</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">'《玉散江作业》贪吃蛇'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">updateGrid</span><span class="s5">()</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 继续下一关</span>
+  <span class="s1">nextLevel</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">&lt; </span><span class="s6">10</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">+= </span><span class="s6">1</span>
+    <span class="s3">}</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">snake </span><span class="s4">= </span><span class="s5">[[</span><span class="s6">5</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">4</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span><span class="s4">, </span><span class="s5">[</span><span class="s6">3</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">food </span><span class="s4">= </span><span class="s5">[</span><span class="s6">10</span><span class="s4">, </span><span class="s6">10</span><span class="s5">]</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">dir </span><span class="s4">= </span><span class="s7">'right'</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten </span><span class="s4">= </span><span class="s6">0</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">= </span><span class="s1">false</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">startGame</span><span class="s5">()</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">message </span><span class="s4">= </span><span class="s7">`分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">} </span><span class="s7">| 难度: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级 | 食物: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten</span><span class="s3">}</span><span class="s7">/</span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget</span><span class="s3">}</span><span class="s7">`</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 暂停/继续</span>
+  <span class="s1">togglePause</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s1">return</span>
+    <span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">= !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 根据单元格类型获取显示内容</span>
+  <span class="s1">getCellContent</span><span class="s5">(</span><span class="s1">cellType</span><span class="s4">: </span><span class="s1">string</span><span class="s5">)</span><span class="s4">: </span><span class="s1">string </span><span class="s3">{</span>
+    <span class="s1">switch </span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">case </span><span class="s7">'snakeHead'</span><span class="s4">: </span><span class="s1">return </span><span class="s7">'●'</span>
+      <span class="s1">case </span><span class="s7">'snakeBody'</span><span class="s4">: </span><span class="s1">return </span><span class="s7">'○'</span>
+      <span class="s1">case </span><span class="s7">'food'</span><span class="s4">: </span><span class="s1">return </span><span class="s7">'★'</span>
+      <span class="s1">default</span><span class="s4">: </span><span class="s1">return </span><span class="s7">'·'</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 根据单元格类型获取颜色</span>
+  <span class="s1">getCellColor</span><span class="s5">(</span><span class="s1">cellType</span><span class="s4">: </span><span class="s1">string</span><span class="s5">)</span><span class="s4">: </span><span class="s1">ResourceColor </span><span class="s3">{</span>
+    <span class="s1">switch </span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">case </span><span class="s7">'snakeHead'</span><span class="s4">: </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Green</span>
+      <span class="s1">case </span><span class="s7">'snakeBody'</span><span class="s4">: </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Green</span>
+      <span class="s1">case </span><span class="s7">'food'</span><span class="s4">: </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Red</span>
+      <span class="s1">default</span><span class="s4">: </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Gray</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 根据单元格类型获取字体大小</span>
+  <span class="s1">getCellSize</span><span class="s5">(</span><span class="s1">cellType</span><span class="s4">: </span><span class="s1">string</span><span class="s5">)</span><span class="s4">: </span><span class="s1">number </span><span class="s3">{</span>
+    <span class="s1">switch </span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">case </span><span class="s7">'snakeHead'</span><span class="s4">: </span><span class="s1">return this</span><span class="s4">.</span><span class="s1">cellSize</span>
+      <span class="s1">case </span><span class="s7">'snakeBody'</span><span class="s4">: </span><span class="s1">return this</span><span class="s4">.</span><span class="s1">cellSize </span><span class="s4">- </span><span class="s6">2</span>
+      <span class="s1">case </span><span class="s7">'food'</span><span class="s4">: </span><span class="s1">return this</span><span class="s4">.</span><span class="s1">cellSize</span>
+      <span class="s1">default</span><span class="s4">: </span><span class="s1">return this</span><span class="s4">.</span><span class="s1">cellSize </span><span class="s4">- </span><span class="s6">4</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 获取难度描述</span>
+  <span class="s1">getDifficultyDescription</span><span class="s5">(</span><span class="s1">level</span><span class="s4">: </span><span class="s1">number</span><span class="s5">)</span><span class="s4">: </span><span class="s1">string </span><span class="s3">{</span>
+    <span class="s1">const descriptions </span><span class="s4">= </span><span class="s5">[</span>
+      <span class="s7">&quot;超慢 - 新手友好 (吃5个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;很慢 - 适合初学者 (吃5个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;慢速 - 轻松上手 (吃5个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;较慢 - 简单难度 (吃5个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;中等 - 标准速度 (吃5个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;较快 - 略有挑战 (吃10个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;快速 - 需要技巧 (吃10个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;很快 - 高手难度 (吃10个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;极快 - 专业玩家 (吃10个)&quot;</span><span class="s4">,</span>
+      <span class="s7">&quot;极限 - 挑战不可能 (吃10个)&quot;</span>
+    <span class="s5">]</span>
+    <span class="s1">return descriptions</span><span class="s5">[</span><span class="s1">level </span><span class="s4">- </span><span class="s6">1</span><span class="s5">]</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 获取难度对应的颜色</span>
+  <span class="s1">getDifficultyColor</span><span class="s5">(</span><span class="s1">level</span><span class="s4">: </span><span class="s1">number</span><span class="s5">)</span><span class="s4">: </span><span class="s1">ResourceColor </span><span class="s3">{</span>
+    <span class="s1">if </span><span class="s5">(</span><span class="s1">level </span><span class="s4">&lt;= </span><span class="s6">3</span><span class="s5">) </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Green </span><span class="s0">// 简单难度</span>
+    <span class="s1">else if </span><span class="s5">(</span><span class="s1">level </span><span class="s4">&lt;= </span><span class="s6">6</span><span class="s5">) </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Blue </span><span class="s0">// 中等难度</span>
+    <span class="s1">else if </span><span class="s5">(</span><span class="s1">level </span><span class="s4">&lt;= </span><span class="s6">8</span><span class="s5">) </span><span class="s1">return Color</span><span class="s4">.</span><span class="s1">Orange </span><span class="s0">// 困难难度</span>
+    <span class="s1">else return Color</span><span class="s4">.</span><span class="s1">Red </span><span class="s0">// 极难难度</span>
+  <span class="s3">}</span>
+
+  <span class="s0">// 生成难度级别数组（解决 ForEach 类型问题）</span>
+  <span class="s1">getDifficultyLevels</span><span class="s5">()</span><span class="s4">: </span><span class="s1">number</span><span class="s5">[] </span><span class="s3">{</span>
+    <span class="s1">let levels</span><span class="s4">: </span><span class="s1">number</span><span class="s5">[] </span><span class="s4">= </span><span class="s5">[]</span>
+    <span class="s1">for </span><span class="s5">(</span><span class="s1">let i </span><span class="s4">= </span><span class="s6">1</span><span class="s4">; </span><span class="s1">i </span><span class="s4">&lt;= </span><span class="s6">10</span><span class="s4">; </span><span class="s1">i</span><span class="s4">++</span><span class="s5">) </span><span class="s3">{</span>
+      <span class="s1">levels</span><span class="s4">.</span><span class="s1">push</span><span class="s5">(</span><span class="s1">i</span><span class="s5">)</span>
+    <span class="s3">}</span>
+    <span class="s1">return levels</span>
+  <span class="s3">}</span>
+
+  <span class="s1">build</span><span class="s5">() </span><span class="s3">{</span>
+    <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+      <span class="s0">// 标题和分数</span>
+      <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+        <span class="s1">Text</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">message</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">20</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">fontWeight</span><span class="s5">(</span><span class="s1">FontWeight</span><span class="s4">.</span><span class="s1">Bold</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">layoutWeight</span><span class="s5">(</span><span class="s6">1</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">textAlign</span><span class="s5">(</span><span class="s1">TextAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+      <span class="s3">}</span>
+      <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+      <span class="s4">.</span><span class="s1">padding</span><span class="s5">(</span><span class="s6">10</span><span class="s5">)</span>
+
+      <span class="s0">// 游戏状态</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'游戏结束!'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">26</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Red</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">`最终分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">}</span><span class="s7">`</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">20</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Button</span><span class="s5">(</span><span class="s7">'重新选择难度'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">resetGame</span><span class="s5">())</span>
+            <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Blue</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">150</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">40</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+        <span class="s3">}</span>
+        <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">justifyContent</span><span class="s5">(</span><span class="s1">FlexAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">alignItems</span><span class="s5">(</span><span class="s1">HorizontalAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+      <span class="s3">}</span>
+      <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'恭喜过关!'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">26</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Green</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">`分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">} </span><span class="s7">| 难度: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级`</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">20</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">`吃了 </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten</span><span class="s3">} </span><span class="s7">个食物`</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">18</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s1">Button</span><span class="s5">(</span><span class="s7">'继续下一关'</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">nextLevel</span><span class="s5">())</span>
+              <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Green</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">120</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">40</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">right</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+            <span class="s1">Button</span><span class="s5">(</span><span class="s7">'返回菜单'</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">backToDifficultySelection</span><span class="s5">())</span>
+              <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Blue</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">120</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">40</span><span class="s5">)</span>
+          <span class="s3">}</span>
+        <span class="s3">}</span>
+        <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">justifyContent</span><span class="s5">(</span><span class="s1">FlexAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">alignItems</span><span class="s5">(</span><span class="s1">HorizontalAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+      <span class="s3">}</span>
+      <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s0">// 难度选择界面</span>
+        <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'请选择游戏难度'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">24</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontWeight</span><span class="s5">(</span><span class="s1">FontWeight</span><span class="s4">.</span><span class="s1">Bold</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Blue</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'级别越高，蛇移动越快'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">16</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">30 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s0">// 创建10个难度级别按钮 - 使用显式类型声明</span>
+          <span class="s1">ForEach</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getDifficultyLevels</span><span class="s5">()</span><span class="s4">, </span><span class="s5">(</span><span class="s1">level</span><span class="s4">: </span><span class="s1">number</span><span class="s4">, </span><span class="s1">index</span><span class="s4">?: </span><span class="s1">number</span><span class="s5">) </span><span class="s4">=&gt; </span><span class="s3">{</span>
+            <span class="s1">Button</span><span class="s5">(</span><span class="s7">`</span><span class="s3">${</span><span class="s1">level</span><span class="s3">}</span><span class="s7">级 - </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getDifficultyDescription</span><span class="s5">(</span><span class="s1">level</span><span class="s5">)</span><span class="s3">}</span><span class="s7">`</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">startWithDifficulty</span><span class="s5">(</span><span class="s1">level</span><span class="s5">))</span>
+              <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getDifficultyColor</span><span class="s5">(</span><span class="s1">level</span><span class="s5">))</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">White</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'90%'</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">45</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">8 </span><span class="s3">}</span><span class="s5">)</span>
+          <span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">`当前选择: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级`</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">16</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">top</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Green</span><span class="s5">)</span>
+        <span class="s3">}</span>
+        <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">padding</span><span class="s5">(</span><span class="s6">20</span><span class="s5">)</span>
+      <span class="s3">}</span>
+      <span class="s1">else if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">Text</span><span class="s5">(</span><span class="s7">'游戏暂停'</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">24</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Orange</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+      <span class="s3">}</span>
+
+      <span class="s0">// 游戏区域 - 只在游戏进行中显示</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s4">!</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">&amp;&amp; !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">&amp;&amp; !</span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+          <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s1">Text</span><span class="s5">(</span><span class="s7">`分数: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">score</span><span class="s3">}</span><span class="s7">`</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">18</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Blue</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">layoutWeight</span><span class="s5">(</span><span class="s6">1</span><span class="s5">)</span>
+
+            <span class="s1">Text</span><span class="s5">(</span><span class="s7">`难度: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s3">}</span><span class="s7">级`</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">18</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getDifficultyColor</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty</span><span class="s5">))</span>
+          <span class="s3">}</span>
+          <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">5 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s1">Text</span><span class="s5">(</span><span class="s7">`食物: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">foodEaten</span><span class="s3">}</span><span class="s7">/</span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">maxFoodTarget</span><span class="s3">}</span><span class="s7">`</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">18</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Red</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">layoutWeight</span><span class="s5">(</span><span class="s6">1</span><span class="s5">)</span>
+
+            <span class="s1">Text</span><span class="s5">(</span><span class="s7">`目标: </span><span class="s3">${</span><span class="s1">this</span><span class="s4">.</span><span class="s1">difficulty </span><span class="s4">&lt;= </span><span class="s6">5 </span><span class="s4">? </span><span class="s7">'5个' </span><span class="s4">: </span><span class="s7">'10个'</span><span class="s3">}</span><span class="s7">`</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">18</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(0x800080) </span><span class="s0">// 紫色，使用十六进制代替 Color.Purple</span>
+          <span class="s3">}</span>
+          <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s0">// 使用显式类型声明</span>
+            <span class="s1">ForEach</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">gridData</span><span class="s4">, </span><span class="s5">(</span><span class="s1">rowData</span><span class="s4">: </span><span class="s1">string</span><span class="s5">[]</span><span class="s4">, </span><span class="s1">rowIndex</span><span class="s4">: </span><span class="s1">number</span><span class="s5">) </span><span class="s4">=&gt; </span><span class="s3">{</span>
+              <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+                <span class="s1">ForEach</span><span class="s5">(</span><span class="s1">rowData</span><span class="s4">, </span><span class="s5">(</span><span class="s1">cellType</span><span class="s4">: </span><span class="s1">string</span><span class="s4">, </span><span class="s1">colIndex</span><span class="s4">: </span><span class="s1">number</span><span class="s5">) </span><span class="s4">=&gt; </span><span class="s3">{</span>
+                  <span class="s1">Text</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getCellContent</span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">))</span>
+                    <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getCellSize</span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">))</span>
+                    <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">getCellColor</span><span class="s5">(</span><span class="s1">cellType</span><span class="s5">))</span>
+                <span class="s3">}</span><span class="s5">)</span>
+              <span class="s3">}</span>
+            <span class="s3">}</span><span class="s5">)</span>
+          <span class="s3">}</span>
+          <span class="s4">.</span><span class="s1">border</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">width</span><span class="s4">: </span><span class="s6">2</span><span class="s4">, </span><span class="s1">color</span><span class="s4">: </span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Black </span><span class="s3">}</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">White</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">padding</span><span class="s5">(</span><span class="s6">5</span><span class="s5">)</span>
+          <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s0">// 方向控制 - 修改为更灵敏的按钮</span>
+          <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+              <span class="s1">Button</span><span class="s5">(</span><span class="s7">'↑'</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">changeDirection</span><span class="s5">(</span><span class="s7">'up'</span><span class="s5">))</span>
+                <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">70</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">55</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">5 </span><span class="s3">}</span><span class="s5">)</span>
+            <span class="s3">}</span>
+            <span class="s4">.</span><span class="s1">justifyContent</span><span class="s5">(</span><span class="s1">FlexAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+
+            <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+              <span class="s1">Button</span><span class="s5">(</span><span class="s7">'←'</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">changeDirection</span><span class="s5">(</span><span class="s7">'left'</span><span class="s5">))</span>
+                <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">70</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">55</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">right</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+              <span class="s1">Button</span><span class="s5">(</span><span class="s7">'↓'</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">changeDirection</span><span class="s5">(</span><span class="s7">'down'</span><span class="s5">))</span>
+                <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">70</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">55</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">right</span><span class="s4">: </span><span class="s6">10 </span><span class="s3">}</span><span class="s5">)</span>
+
+              <span class="s1">Button</span><span class="s5">(</span><span class="s7">'→'</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">changeDirection</span><span class="s5">(</span><span class="s7">'right'</span><span class="s5">))</span>
+                <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">70</span><span class="s5">)</span>
+                <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">55</span><span class="s5">)</span>
+            <span class="s3">}</span>
+            <span class="s4">.</span><span class="s1">justifyContent</span><span class="s5">(</span><span class="s1">FlexAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">top</span><span class="s4">: </span><span class="s6">5 </span><span class="s3">}</span><span class="s5">)</span>
+          <span class="s3">}</span>
+          <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s0">// 控制按钮</span>
+          <span class="s1">Row</span><span class="s5">() </span><span class="s3">{</span>
+            <span class="s1">Button</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">? </span><span class="s7">'继续' </span><span class="s4">: </span><span class="s7">'暂停'</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">togglePause</span><span class="s5">())</span>
+              <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">paused </span><span class="s4">? </span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Green </span><span class="s4">: </span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Orange</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">100</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">40</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">right</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+
+            <span class="s1">Button</span><span class="s5">(</span><span class="s7">'返回菜单'</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">onClick</span><span class="s5">(() </span><span class="s4">=&gt; </span><span class="s1">this</span><span class="s4">.</span><span class="s1">backToDifficultySelection</span><span class="s5">())</span>
+              <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(0x800080) </span><span class="s0">// 紫色</span>
+              <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">White</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s6">120</span><span class="s5">)</span>
+              <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s6">40</span><span class="s5">)</span>
+          <span class="s3">}</span>
+        <span class="s3">}</span>
+      <span class="s3">}</span>
+
+      <span class="s0">// 游戏说明 - 只在难度选择界面显示</span>
+      <span class="s1">if </span><span class="s5">(</span><span class="s1">this</span><span class="s4">.</span><span class="s1">isSelectingDifficulty </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">gameOver </span><span class="s4">|| </span><span class="s1">this</span><span class="s4">.</span><span class="s1">levelComplete</span><span class="s5">) </span><span class="s3">{</span>
+        <span class="s1">Column</span><span class="s5">() </span><span class="s3">{</span>
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'游戏说明:'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">16</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontWeight</span><span class="s5">(</span><span class="s1">FontWeight</span><span class="s4">.</span><span class="s1">Bold</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">bottom</span><span class="s4">: </span><span class="s6">5 </span><span class="s3">}</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'1. 选择难度级别开始游戏'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">14</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'2. 方向键控制蛇移动（立即响应）'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">14</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'3. 吃到★增加10分，前5关吃5个过关'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">14</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray</span><span class="s5">)</span>
+
+          <span class="s1">Text</span><span class="s5">(</span><span class="s7">'4. 后5关吃10个过关，不要撞墙或自己'</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontSize</span><span class="s5">(</span><span class="s6">14</span><span class="s5">)</span>
+            <span class="s4">.</span><span class="s1">fontColor</span><span class="s5">(</span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray</span><span class="s5">)</span>
+        <span class="s3">}</span>
+        <span class="s4">.</span><span class="s1">margin</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">top</span><span class="s4">: </span><span class="s6">20 </span><span class="s3">}</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">padding</span><span class="s5">(</span><span class="s6">10</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">border</span><span class="s5">(</span><span class="s3">{ </span><span class="s1">width</span><span class="s4">: </span><span class="s6">1</span><span class="s4">, </span><span class="s1">color</span><span class="s4">: </span><span class="s1">Color</span><span class="s4">.</span><span class="s1">Gray </span><span class="s3">}</span><span class="s5">)</span>
+        <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'90%'</span><span class="s5">)</span>
+      <span class="s3">}</span>
+    <span class="s3">}</span>
+    <span class="s4">.</span><span class="s1">width</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+    <span class="s4">.</span><span class="s1">height</span><span class="s5">(</span><span class="s7">'100%'</span><span class="s5">)</span>
+    <span class="s4">.</span><span class="s1">padding</span><span class="s5">(</span><span class="s6">20</span><span class="s5">)</span>
+    <span class="s4">.</span><span class="s1">backgroundColor</span><span class="s5">(0xF0F8FF)</span>
+    <span class="s4">.</span><span class="s1">justifyContent</span><span class="s5">(</span><span class="s1">FlexAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+    <span class="s4">.</span><span class="s1">alignItems</span><span class="s5">(</span><span class="s1">HorizontalAlign</span><span class="s4">.</span><span class="s1">Center</span><span class="s5">)</span>
+  <span class="s3">}</span>
+<span class="s3">}</span></pre>
+</body>
+</html>

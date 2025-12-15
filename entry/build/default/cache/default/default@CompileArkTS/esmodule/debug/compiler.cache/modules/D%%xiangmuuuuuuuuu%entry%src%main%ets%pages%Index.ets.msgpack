@@ -1,0 +1,1829 @@
+Ôr@Ÿªassertions¤code´customTransformCache¬dependencies¢id¤meta±moduleSideEffects¬originalCode±originalSourcemap«resolvedIds®sourcemapChainµsyntheticNamedExportsµtransformDependencies®transformFiles¨cacheAstÔrAÚ¦¹"use strict";
+if (!("finalizeConstruction" in ViewPU.prototype)) {
+    Reflect.set(ViewPU.prototype, "finalizeConstruction", () => { });
+}
+class Index extends ViewPU {
+    constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
+        super(parent, __localStorage, elmtId, extraInfo);
+        if (typeof paramsLambda === "function") {
+            this.paramsGenerator_ = paramsLambda;
+        }
+        this.gridSize = 10 // 10Ã—10çš„åœºåœ°
+        ;
+        this.cellSize = 28 // æ¯ä¸ªæ ¼å­28åƒç´ ï¼ˆæ›´å¤§ä¸€äº›ï¼‰
+        ;
+        this.__snake = new ObservedPropertyObjectPU([[5, 5], [4, 5], [3, 5]] // åˆå§‹åœ¨ä¸­å¿ƒ
+        , this, "snake");
+        this.__food = new ObservedPropertyObjectPU([7, 5], this, "food");
+        this.__currentDirection = new ObservedPropertySimplePU('right' // å½“å‰ç§»åŠ¨æ–¹å‘
+        , this, "currentDirection");
+        this.__queuedDirection = new ObservedPropertySimplePU('right' // æ’é˜Ÿçš„ä¸‹ä¸€ä¸ªæ–¹å‘
+        , this, "queuedDirection");
+        this.__gameOver = new ObservedPropertySimplePU(false, this, "gameOver");
+        this.__score = new ObservedPropertySimplePU(0, this, "score");
+        this.__paused = new ObservedPropertySimplePU(false, this, "paused");
+        this.__message = new ObservedPropertySimplePU('ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡', this, "message");
+        this.__difficulty = new ObservedPropertySimplePU(5, this, "difficulty");
+        this.__isSelectingDifficulty = new ObservedPropertySimplePU(true, this, "isSelectingDifficulty");
+        this.__foodEaten = new ObservedPropertySimplePU(0, this, "foodEaten");
+        this.__levelComplete = new ObservedPropertySimplePU(false, this, "levelComplete");
+        this.__maxFoodTarget = new ObservedPropertySimplePU(5, this, "maxFoodTarget");
+        this.__isMoving = new ObservedPropertySimplePU(false
+        // æ¸¸æˆè®¡æ—¶
+        , this, "isMoving");
+        this.gameSpeed = 300;
+        this.timerId = 0;
+        this.lastMoveTime = 0;
+        this.__gridData = new ObservedPropertyObjectPU([]
+        // éš¾åº¦é…ç½®
+        , this, "gridData");
+        this.difficultySpeeds = [500, 450, 400, 350, 300, 250, 200, 150, 100, 50];
+        this.setInitiallyProvidedValue(params);
+        this.finalizeConstruction();
+    }
+    setInitiallyProvidedValue(params) {
+        if (params.gridSize !== undefined) {
+            this.gridSize = params.gridSize;
+        }
+        if (params.cellSize !== undefined) {
+            this.cellSize = params.cellSize;
+        }
+        if (params.snake !== undefined) {
+            this.snake = params.snake;
+        }
+        if (params.food !== undefined) {
+            this.food = params.food;
+        }
+        if (params.currentDirection !== undefined) {
+            this.currentDirection = params.currentDirection;
+        }
+        if (params.queuedDirection !== undefined) {
+            this.queuedDirection = params.queuedDirection;
+        }
+        if (params.gameOver !== undefined) {
+            this.gameOver = params.gameOver;
+        }
+        if (params.score !== undefined) {
+            this.score = params.score;
+        }
+        if (params.paused !== undefined) {
+            this.paused = params.paused;
+        }
+        if (params.message !== undefined) {
+            this.message = params.message;
+        }
+        if (params.difficulty !== undefined) {
+            this.difficulty = params.difficulty;
+        }
+        if (params.isSelectingDifficulty !== undefined) {
+            this.isSelectingDifficulty = params.isSelectingDifficulty;
+        }
+        if (params.foodEaten !== undefined) {
+            this.foodEaten = params.foodEaten;
+        }
+        if (params.levelComplete !== undefined) {
+            this.levelComplete = params.levelComplete;
+        }
+        if (params.maxFoodTarget !== undefined) {
+            this.maxFoodTarget = params.maxFoodTarget;
+        }
+        if (params.isMoving !== undefined) {
+            this.isMoving = params.isMoving;
+        }
+        if (params.gameSpeed !== undefined) {
+            this.gameSpeed = params.gameSpeed;
+        }
+        if (params.timerId !== undefined) {
+            this.timerId = params.timerId;
+        }
+        if (params.lastMoveTime !== undefined) {
+            this.lastMoveTime = params.lastMoveTime;
+        }
+        if (params.gridData !== undefined) {
+            this.gridData = params.gridData;
+        }
+        if (params.difficultySpeeds !== undefined) {
+            this.difficultySpeeds = params.difficultySpeeds;
+        }
+    }
+    updateStateVars(params) {
+    }
+    purgeVariableDependenciesOnElmtId(rmElmtId) {
+        this.__snake.purgeDependencyOnElmtId(rmElmtId);
+        this.__food.purgeDependencyOnElmtId(rmElmtId);
+        this.__currentDirection.purgeDependencyOnElmtId(rmElmtId);
+        this.__queuedDirection.purgeDependencyOnElmtId(rmElmtId);
+        this.__gameOver.purgeDependencyOnElmtId(rmElmtId);
+        this.__score.purgeDependencyOnElmtId(rmElmtId);
+        this.__paused.purgeDependencyOnElmtId(rmElmtId);
+        this.__message.purgeDependencyOnElmtId(rmElmtId);
+        this.__difficulty.purgeDependencyOnElmtId(rmElmtId);
+        this.__isSelectingDifficulty.purgeDependencyOnElmtId(rmElmtId);
+        this.__foodEaten.purgeDependencyOnElmtId(rmElmtId);
+        this.__levelComplete.purgeDependencyOnElmtId(rmElmtId);
+        this.__maxFoodTarget.purgeDependencyOnElmtId(rmElmtId);
+        this.__isMoving.purgeDependencyOnElmtId(rmElmtId);
+        this.__gridData.purgeDependencyOnElmtId(rmElmtId);
+    }
+    aboutToBeDeleted() {
+        this.__snake.aboutToBeDeleted();
+        this.__food.aboutToBeDeleted();
+        this.__currentDirection.aboutToBeDeleted();
+        this.__queuedDirection.aboutToBeDeleted();
+        this.__gameOver.aboutToBeDeleted();
+        this.__score.aboutToBeDeleted();
+        this.__paused.aboutToBeDeleted();
+        this.__message.aboutToBeDeleted();
+        this.__difficulty.aboutToBeDeleted();
+        this.__isSelectingDifficulty.aboutToBeDeleted();
+        this.__foodEaten.aboutToBeDeleted();
+        this.__levelComplete.aboutToBeDeleted();
+        this.__maxFoodTarget.aboutToBeDeleted();
+        this.__isMoving.aboutToBeDeleted();
+        this.__gridData.aboutToBeDeleted();
+        SubscriberManager.Get().delete(this.id__());
+        this.aboutToBeDeletedInternal();
+    }
+    get snake() {
+        return this.__snake.get();
+    }
+    set snake(newValue) {
+        this.__snake.set(newValue);
+    }
+    get food() {
+        return this.__food.get();
+    }
+    set food(newValue) {
+        this.__food.set(newValue);
+    }
+    get currentDirection() {
+        return this.__currentDirection.get();
+    }
+    set currentDirection(newValue) {
+        this.__currentDirection.set(newValue);
+    }
+    get queuedDirection() {
+        return this.__queuedDirection.get();
+    }
+    set queuedDirection(newValue) {
+        this.__queuedDirection.set(newValue);
+    }
+    get gameOver() {
+        return this.__gameOver.get();
+    }
+    set gameOver(newValue) {
+        this.__gameOver.set(newValue);
+    }
+    get score() {
+        return this.__score.get();
+    }
+    set score(newValue) {
+        this.__score.set(newValue);
+    }
+    get paused() {
+        return this.__paused.get();
+    }
+    set paused(newValue) {
+        this.__paused.set(newValue);
+    }
+    get message() {
+        return this.__message.get();
+    }
+    set message(newValue) {
+        this.__message.set(newValue);
+    }
+    get difficulty() {
+        return this.__difficulty.get();
+    }
+    set difficulty(newValue) {
+        this.__difficulty.set(newValue);
+    }
+    get isSelectingDifficulty() {
+        return this.__isSelectingDifficulty.get();
+    }
+    set isSelectingDifficulty(newValue) {
+        this.__isSelectingDifficulty.set(newValue);
+    }
+    get foodEaten() {
+        return this.__foodEaten.get();
+    }
+    set foodEaten(newValue) {
+        this.__foodEaten.set(newValue);
+    }
+    get levelComplete() {
+        return this.__levelComplete.get();
+    }
+    set levelComplete(newValue) {
+        this.__levelComplete.set(newValue);
+    }
+    get maxFoodTarget() {
+        return this.__maxFoodTarget.get();
+    }
+    set maxFoodTarget(newValue) {
+        this.__maxFoodTarget.set(newValue);
+    }
+    get isMoving() {
+        return this.__isMoving.get();
+    }
+    set isMoving(newValue) {
+        this.__isMoving.set(newValue);
+    }
+    get gridData() {
+        return this.__gridData.get();
+    }
+    set gridData(newValue) {
+        this.__gridData.set(newValue);
+    }
+    // ç”Ÿå‘½å‘¨æœŸ
+    aboutToAppear() {
+        this.initializeGrid();
+    }
+    aboutToDisappear() {
+        this.stopGame();
+    }
+    // åˆå§‹åŒ–ç½‘æ ¼
+    initializeGrid() {
+        // å¿«é€Ÿåˆå§‹åŒ–10Ã—10ç©ºç½‘æ ¼
+        let newGrid = [];
+        for (let i = 0; i < this.gridSize; i++) {
+            newGrid.push(Array(this.gridSize).fill('empty'));
+        }
+        this.gridData = newGrid;
+        // å»¶è¿Ÿåˆå§‹åŒ–æ¸¸æˆçŠ¶æ€
+        setTimeout(() => {
+            this.updateGrid();
+        }, 50);
+    }
+    // åœæ­¢æ¸¸æˆ
+    stopGame() {
+        if (this.timerId > 0) {
+            clearInterval(this.timerId);
+            this.timerId = 0;
+        }
+        this.isMoving = false;
+    }
+    // å¼€å§‹æ¸¸æˆ
+    startGame() {
+        this.stopGame();
+        // è®¾ç½®æ¸¸æˆé€Ÿåº¦
+        this.gameSpeed = this.difficultySpeeds[this.difficulty - 1];
+        this.maxFoodTarget = this.difficulty <= 5 ? 5 : 10;
+        this.lastMoveTime = new Date().getTime();
+        // å¼€å§‹æ¸¸æˆå¾ªç¯ï¼ˆ60FPSï¼‰
+        this.timerId = setInterval(() => {
+            this.gameLoop();
+        }, 16);
+    }
+    // æ¸¸æˆä¸»å¾ªç¯
+    gameLoop() {
+        if (this.paused || this.gameOver || this.isSelectingDifficulty || this.levelComplete)
+            return;
+        const currentTime = new Date().getTime();
+        const elapsed = currentTime - this.lastMoveTime;
+        if (elapsed >= this.gameSpeed && !this.isMoving) {
+            this.isMoving = true;
+            this.moveSnake();
+            this.lastMoveTime = currentTime;
+            this.isMoving = false;
+        }
+    }
+    // ç§»åŠ¨è›‡ - æ ¸å¿ƒé€»è¾‘
+    moveSnake() {
+        // åœ¨ç§»åŠ¨å‰ç«‹å³åº”ç”¨æ’é˜Ÿçš„ä¸‹ä¸€ä¸ªæ–¹å‘
+        this.currentDirection = this.queuedDirection;
+        let headX = this.snake[0][0];
+        let headY = this.snake[0][1];
+        // è®¡ç®—ä¸‹ä¸€ä¸ªä½ç½®
+        switch (this.currentDirection) {
+            case 'up':
+                headY -= 1;
+                break;
+            case 'down':
+                headY += 1;
+                break;
+            case 'left':
+                headX -= 1;
+                break;
+            case 'right':
+                headX += 1;
+                break;
+        }
+        // è¾¹ç•Œæ£€æŸ¥ï¼ˆ10Ã—10åœºåœ°ï¼‰
+        if (headX < 0 || headX >= this.gridSize || headY < 0 || headY >= this.gridSize) {
+            this.endGame();
+            return;
+        }
+        // ç¢°æ’æ£€æŸ¥
+        for (let i = 0; i < this.snake.length; i++) {
+            if (this.snake[i][0] === headX && this.snake[i][1] === headY) {
+                this.endGame();
+                return;
+            }
+        }
+        // åˆ›å»ºæ–°è›‡
+        let newSnake = [[headX, headY]];
+        // æ£€æŸ¥æ˜¯å¦åƒåˆ°é£Ÿç‰©
+        if (headX === this.food[0] && headY === this.food[1]) {
+            // åƒåˆ°é£Ÿç‰©ï¼Œè›‡å˜é•¿
+            for (let i = 0; i < this.snake.length; i++) {
+                newSnake.push(this.snake[i]);
+            }
+            this.score += 10;
+            this.foodEaten += 1;
+            this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`;
+            if (this.foodEaten >= this.maxFoodTarget) {
+                this.completeLevel();
+                return;
+            }
+            // ç”Ÿæˆæ–°é£Ÿç‰©ï¼ˆåªåœ¨å†…éƒ¨9Ã—9åŒºåŸŸï¼‰
+            this.generateFood(newSnake);
+        }
+        else {
+            // æ²¡åƒåˆ°é£Ÿç‰©ï¼Œæ­£å¸¸ç§»åŠ¨
+            for (let i = 0; i < this.snake.length - 1; i++) {
+                newSnake.push(this.snake[i]);
+            }
+        }
+        this.snake = newSnake;
+        this.updateGrid();
+    }
+    // ç”Ÿæˆé£Ÿç‰© - åªåœ¨å†…éƒ¨9Ã—9åŒºåŸŸå‡ºç°
+    generateFood(snake) {
+        let attempts = 0;
+        let found = false;
+        let newFood = [1, 1]; // é»˜è®¤åœ¨å†…éƒ¨åŒºåŸŸ
+        while (!found && attempts < 100) {
+            // åªåœ¨1-8çš„èŒƒå›´å†…ç”Ÿæˆé£Ÿç‰©ï¼ˆé¿å¼€æœ€å¤–å›´çš„0å’Œ9ï¼‰
+            // è¿™æ ·é£Ÿç‰©åªä¼šå‡ºç°åœ¨å†…éƒ¨çš„9Ã—9åŒºåŸŸï¼ˆåæ ‡1-8ï¼‰
+            newFood = [
+                Math.floor(Math.random() * 8) + 1,
+                Math.floor(Math.random() * 8) + 1 // 1-8
+            ];
+            found = true;
+            for (let i = 0; i < snake.length; i++) {
+                if (snake[i][0] === newFood[0] && snake[i][1] === newFood[1]) {
+                    found = false;
+                    break;
+                }
+            }
+            attempts++;
+        }
+        this.food = newFood;
+    }
+    // æ›´æ–°ç½‘æ ¼æ•°æ®
+    updateGrid() {
+        let newGrid = [];
+        // åˆ›å»º10Ã—10ç½‘æ ¼
+        for (let row = 0; row < this.gridSize; row++) {
+            let rowData = [];
+            for (let col = 0; col < this.gridSize; col++) {
+                let cellType = 'empty';
+                // æ£€æŸ¥æ˜¯å¦æ˜¯é£Ÿç‰©
+                if (col === this.food[0] && row === this.food[1]) {
+                    cellType = 'food';
+                }
+                rowData.push(cellType);
+            }
+            newGrid.push(rowData);
+        }
+        // æ”¾ç½®è›‡
+        for (let i = 0; i < this.snake.length; i++) {
+            const segment = this.snake[i];
+            const x = segment[0];
+            const y = segment[1];
+            if (x >= 0 && x < this.gridSize && y >= 0 && y < this.gridSize) {
+                newGrid[y][x] = i === 0 ? 'snakeHead' : 'snakeBody';
+            }
+        }
+        this.gridData = newGrid;
+    }
+    // å®Œæˆå…³å¡
+    completeLevel() {
+        this.levelComplete = true;
+        this.stopGame();
+        this.message = `æ­å–œï¼å®Œæˆç¬¬${this.difficulty}çº§å…³å¡`;
+    }
+    // ç»“æŸæ¸¸æˆ
+    endGame() {
+        this.gameOver = true;
+        this.stopGame();
+        this.message = 'æ¸¸æˆç»“æŸ';
+    }
+    // ç«‹å³å“åº”æ–¹å‘æ”¹å˜
+    changeDirectionImmediate(newDir) {
+        if (this.isSelectingDifficulty || this.gameOver || this.levelComplete || this.paused) {
+            return;
+        }
+        // é˜²æ­¢ç›´æ¥åå‘ç§»åŠ¨
+        if ((this.currentDirection === 'up' && newDir === 'down') ||
+            (this.currentDirection === 'down' && newDir === 'up') ||
+            (this.currentDirection === 'left' && newDir === 'right') ||
+            (this.currentDirection === 'right' && newDir === 'left')) {
+            return;
+        }
+        // ç«‹å³è®¾ç½®æ’é˜Ÿçš„æ–¹å‘
+        this.queuedDirection = newDir;
+    }
+    // æ–¹å‘æŒ‰é’®ç‚¹å‡»å¤„ç†
+    handleDirectionButton(direction) {
+        // ç«‹å³æ”¹å˜æ’é˜Ÿçš„æ–¹å‘
+        this.changeDirectionImmediate(direction);
+        // å¦‚æœæ¸¸æˆæš‚åœï¼ŒæŒ‰æ–¹å‘é”®å°±è‡ªåŠ¨ç»§ç»­
+        if (this.paused && !this.isSelectingDifficulty && !this.gameOver && !this.levelComplete) {
+            this.togglePause();
+        }
+    }
+    // é€‰æ‹©éš¾åº¦å¹¶å¼€å§‹æ¸¸æˆ
+    startWithDifficulty(level) {
+        this.difficulty = level;
+        this.isSelectingDifficulty = false;
+        this.gameOver = false;
+        this.levelComplete = false;
+        this.foodEaten = 0;
+        this.score = 0;
+        this.currentDirection = 'right';
+        this.queuedDirection = 'right';
+        this.snake = [[5, 5], [4, 5], [3, 5]];
+        // åˆå§‹é£Ÿç‰©ä¹Ÿåœ¨å†…éƒ¨åŒºåŸŸ
+        this.food = [7, 5]; // ç¡®ä¿åœ¨å†…éƒ¨åŒºåŸŸ
+        this.startGame();
+        this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`;
+    }
+    // è¿”å›éš¾åº¦é€‰æ‹©
+    backToDifficultySelection() {
+        this.stopGame();
+        this.snake = [[5, 5], [4, 5], [3, 5]];
+        this.food = [7, 5]; // å†…éƒ¨åŒºåŸŸ
+        this.currentDirection = 'right';
+        this.queuedDirection = 'right';
+        this.gameOver = false;
+        this.levelComplete = false;
+        this.score = 0;
+        this.foodEaten = 0;
+        this.paused = false;
+        this.message = 'ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡';
+        this.isSelectingDifficulty = true;
+        this.updateGrid();
+    }
+    // é‡ç½®æ¸¸æˆ
+    resetGame() {
+        this.stopGame();
+        this.snake = [[5, 5], [4, 5], [3, 5]];
+        this.food = [7, 5]; // å†…éƒ¨åŒºåŸŸ
+        this.currentDirection = 'right';
+        this.queuedDirection = 'right';
+        this.gameOver = false;
+        this.levelComplete = false;
+        this.score = 0;
+        this.foodEaten = 0;
+        this.paused = false;
+        this.isSelectingDifficulty = true;
+        this.message = 'ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡';
+        this.updateGrid();
+    }
+    // ç»§ç»­ä¸‹ä¸€å…³
+    nextLevel() {
+        this.stopGame();
+        if (this.difficulty < 10) {
+            this.difficulty += 1;
+        }
+        this.snake = [[5, 5], [4, 5], [3, 5]];
+        this.currentDirection = 'right';
+        this.queuedDirection = 'right';
+        this.gameOver = false;
+        this.levelComplete = false;
+        this.foodEaten = 0;
+        this.paused = false;
+        this.isSelectingDifficulty = false;
+        // ç”Ÿæˆæ–°é£Ÿç‰©ï¼ˆåœ¨å†…éƒ¨åŒºåŸŸï¼‰
+        this.generateFood(this.snake);
+        this.startGame();
+        this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`;
+    }
+    // æš‚åœ/ç»§ç»­
+    togglePause() {
+        if (this.isSelectingDifficulty || this.gameOver || this.levelComplete)
+            return;
+        this.paused = !this.paused;
+    }
+    // è·å–å•å…ƒæ ¼æ˜¾ç¤ºå†…å®¹
+    getCellContent(cellType) {
+        switch (cellType) {
+            case 'snakeHead': return 'â—';
+            case 'snakeBody': return 'â—‹';
+            case 'food': return 'â˜…';
+            default: return 'Â·';
+        }
+    }
+    // è·å–å•å…ƒæ ¼é¢œè‰²
+    getCellColor(cellType) {
+        switch (cellType) {
+            case 'snakeHead': return Color.Green;
+            case 'snakeBody': return Color.Green;
+            case 'food': return Color.Red;
+            default: return Color.Gray;
+        }
+    }
+    // è·å–å•å…ƒæ ¼å­—ä½“å¤§å°
+    getCellSize(cellType) {
+        switch (cellType) {
+            case 'snakeHead': return this.cellSize;
+            case 'snakeBody': return this.cellSize - 2;
+            case 'food': return this.cellSize;
+            default: return this.cellSize - 4;
+        }
+    }
+    // è·å–éš¾åº¦æè¿°
+    getDifficultyDescription(level) {
+        const descriptions = [
+            "è¶…æ…¢ - æ–°æ‰‹å‹å¥½ (åƒ5ä¸ª)",
+            "å¾ˆæ…¢ - é€‚åˆåˆå­¦è€… (åƒ5ä¸ª)",
+            "æ…¢é€Ÿ - è½»æ¾ä¸Šæ‰‹ (åƒ5ä¸ª)",
+            "è¾ƒæ…¢ - ç®€å•éš¾åº¦ (åƒ5ä¸ª)",
+            "ä¸­ç­‰ - æ ‡å‡†é€Ÿåº¦ (åƒ5ä¸ª)",
+            "è¾ƒå¿« - ç•¥æœ‰æŒ‘æˆ˜ (åƒ10ä¸ª)",
+            "å¿«é€Ÿ - éœ€è¦æŠ€å·§ (åƒ10ä¸ª)",
+            "å¾ˆå¿« - é«˜æ‰‹éš¾åº¦ (åƒ10ä¸ª)",
+            "æå¿« - ä¸“ä¸šç©å®¶ (åƒ10ä¸ª)",
+            "æé™ - æŒ‘æˆ˜ä¸å¯èƒ½ (åƒ10ä¸ª)"
+        ];
+        return descriptions[level - 1];
+    }
+    // è·å–éš¾åº¦é¢œè‰²
+    getDifficultyColor(level) {
+        if (level <= 3)
+            return Color.Green;
+        else if (level <= 6)
+            return Color.Blue;
+        else if (level <= 8)
+            return Color.Orange;
+        else
+            return Color.Red;
+    }
+    // ç”Ÿæˆéš¾åº¦çº§åˆ«æ•°ç»„
+    getDifficultyLevels() {
+        const levels = [];
+        for (let i = 1; i <= 10; i++) {
+            levels.push(i);
+        }
+        return levels;
+    }
+    initialRender() {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Scroll.create();
+            Scroll.width('100%');
+            Scroll.height('100%');
+            Scroll.scrollable(ScrollDirection.Vertical);
+            Scroll.scrollBar(BarState.On);
+        }, Scroll);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width('100%');
+            Column.padding(20);
+            Column.backgroundColor(0xF0F8FF);
+            Column.justifyContent(FlexAlign.Start);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // æ ‡é¢˜
+            Row.create();
+            // æ ‡é¢˜
+            Row.width('100%');
+            // æ ‡é¢˜
+            Row.padding(10);
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.message);
+            Text.fontSize(20);
+            Text.fontWeight(FontWeight.Bold);
+            Text.layoutWeight(1);
+            Text.textAlign(TextAlign.Center);
+        }, Text);
+        Text.pop();
+        // æ ‡é¢˜
+        Row.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // æ¸¸æˆçŠ¶æ€
+            if (this.gameOver) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                        Column.width('100%');
+                        Column.justifyContent(FlexAlign.Center);
+                        Column.alignItems(HorizontalAlign.Center);
+                        Column.margin({ bottom: 20 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('æ¸¸æˆç»“æŸ!');
+                        Text.fontSize(26);
+                        Text.fontColor(Color.Red);
+                        Text.margin({ bottom: 10 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`æœ€ç»ˆåˆ†æ•°: ${this.score}`);
+                        Text.fontSize(20);
+                        Text.margin({ bottom: 20 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('é‡æ–°é€‰æ‹©éš¾åº¦');
+                        Button.onClick(() => this.resetGame());
+                        Button.backgroundColor(Color.Blue);
+                        Button.width(150);
+                        Button.height(40);
+                        Button.margin({ bottom: 10 });
+                    }, Button);
+                    Button.pop();
+                    Column.pop();
+                });
+            }
+            else if (this.levelComplete) {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                        Column.width('100%');
+                        Column.justifyContent(FlexAlign.Center);
+                        Column.alignItems(HorizontalAlign.Center);
+                        Column.margin({ bottom: 20 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('æ­å–œè¿‡å…³!');
+                        Text.fontSize(26);
+                        Text.fontColor(Color.Green);
+                        Text.margin({ bottom: 10 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§`);
+                        Text.fontSize(20);
+                        Text.margin({ bottom: 10 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`åƒäº† ${this.foodEaten} ä¸ªé£Ÿç‰©`);
+                        Text.fontSize(18);
+                        Text.margin({ bottom: 20 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Row.create();
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('ç»§ç»­ä¸‹ä¸€å…³');
+                        Button.onClick(() => this.nextLevel());
+                        Button.backgroundColor(Color.Green);
+                        Button.width(120);
+                        Button.height(40);
+                        Button.margin({ right: 20 });
+                    }, Button);
+                    Button.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('è¿”å›èœå•');
+                        Button.onClick(() => this.backToDifficultySelection());
+                        Button.backgroundColor(Color.Blue);
+                        Button.width(120);
+                        Button.height(40);
+                    }, Button);
+                    Button.pop();
+                    Row.pop();
+                    Column.pop();
+                });
+            }
+            else if (this.isSelectingDifficulty) {
+                this.ifElseBranchUpdateFunction(2, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // éš¾åº¦é€‰æ‹©
+                        Column.create();
+                        // éš¾åº¦é€‰æ‹©
+                        Column.width('100%');
+                        // éš¾åº¦é€‰æ‹©
+                        Column.padding(20);
+                        // éš¾åº¦é€‰æ‹©
+                        Column.margin({ bottom: 20 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('è¯·é€‰æ‹©æ¸¸æˆéš¾åº¦');
+                        Text.fontSize(24);
+                        Text.fontWeight(FontWeight.Bold);
+                        Text.margin({ bottom: 20 });
+                        Text.fontColor(Color.Blue);
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('çº§åˆ«è¶Šé«˜ï¼Œè›‡ç§»åŠ¨è¶Šå¿«');
+                        Text.fontSize(16);
+                        Text.fontColor(Color.Gray);
+                        Text.margin({ bottom: 30 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        ForEach.create();
+                        const forEachItemGenFunction = _item => {
+                            const level = _item;
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                Button.createWithLabel(`${level}çº§ - ${this.getDifficultyDescription(level)}`);
+                                Button.onClick(() => this.startWithDifficulty(level));
+                                Button.backgroundColor(this.getDifficultyColor(level));
+                                Button.fontColor(Color.White);
+                                Button.width('90%');
+                                Button.height(45);
+                                Button.margin({ bottom: 8 });
+                            }, Button);
+                            Button.pop();
+                        };
+                        this.forEachUpdateFunction(elmtId, this.getDifficultyLevels(), forEachItemGenFunction);
+                    }, ForEach);
+                    ForEach.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`å½“å‰é€‰æ‹©: ${this.difficulty}çº§`);
+                        Text.fontSize(16);
+                        Text.margin({ top: 20 });
+                        Text.fontColor(Color.Green);
+                    }, Text);
+                    Text.pop();
+                    // éš¾åº¦é€‰æ‹©
+                    Column.pop();
+                });
+            }
+            else if (this.paused) {
+                this.ifElseBranchUpdateFunction(3, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('æ¸¸æˆæš‚åœ');
+                        Text.fontSize(24);
+                        Text.fontColor(Color.Orange);
+                        Text.margin({ bottom: 10 });
+                        Text.width('100%');
+                        Text.textAlign(TextAlign.Center);
+                    }, Text);
+                    Text.pop();
+                });
+            }
+            // æ¸¸æˆåŒºåŸŸ
+            else {
+                this.ifElseBranchUpdateFunction(4, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // æ¸¸æˆåŒºåŸŸ
+            if (!this.isSelectingDifficulty && !this.gameOver && !this.levelComplete) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // åˆ†æ•°å’ŒçŠ¶æ€
+                        Row.create();
+                        // åˆ†æ•°å’ŒçŠ¶æ€
+                        Row.width('100%');
+                        // åˆ†æ•°å’ŒçŠ¶æ€
+                        Row.margin({ bottom: 5 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`åˆ†æ•°: ${this.score}`);
+                        Text.fontSize(18);
+                        Text.fontColor(Color.Blue);
+                        Text.layoutWeight(1);
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`éš¾åº¦: ${this.difficulty}çº§`);
+                        Text.fontSize(18);
+                        Text.fontColor(this.getDifficultyColor(this.difficulty));
+                    }, Text);
+                    Text.pop();
+                    // åˆ†æ•°å’ŒçŠ¶æ€
+                    Row.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Row.create();
+                        Row.width('100%');
+                        Row.margin({ bottom: 10 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`);
+                        Text.fontSize(18);
+                        Text.fontColor(Color.Red);
+                        Text.layoutWeight(1);
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`ç›®æ ‡: ${this.difficulty <= 5 ? '5ä¸ª' : '10ä¸ª'}`);
+                        Text.fontSize(18);
+                        Text.fontColor(0x800080);
+                    }, Text);
+                    Text.pop();
+                    Row.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // 10Ã—10æ¸¸æˆç½‘æ ¼
+                        Column.create();
+                        // 10Ã—10æ¸¸æˆç½‘æ ¼
+                        Column.border({ width: 2, color: Color.Black });
+                        // 10Ã—10æ¸¸æˆç½‘æ ¼
+                        Column.backgroundColor(Color.White);
+                        // 10Ã—10æ¸¸æˆç½‘æ ¼
+                        Column.padding(5);
+                        // 10Ã—10æ¸¸æˆç½‘æ ¼
+                        Column.margin({ bottom: 20 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        ForEach.create();
+                        const forEachItemGenFunction = _item => {
+                            const rowData = _item;
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                Row.create();
+                            }, Row);
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                ForEach.create();
+                                const forEachItemGenFunction = _item => {
+                                    const cellType = _item;
+                                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                        Text.create(this.getCellContent(cellType));
+                                        Text.fontSize(this.getCellSize(cellType));
+                                        Text.fontColor(this.getCellColor(cellType));
+                                        Text.width(this.cellSize);
+                                        Text.height(this.cellSize);
+                                        Text.textAlign(TextAlign.Center);
+                                    }, Text);
+                                    Text.pop();
+                                };
+                                this.forEachUpdateFunction(elmtId, rowData, forEachItemGenFunction);
+                            }, ForEach);
+                            ForEach.pop();
+                            Row.pop();
+                        };
+                        this.forEachUpdateFunction(elmtId, this.gridData, forEachItemGenFunction);
+                    }, ForEach);
+                    ForEach.pop();
+                    // 10Ã—10æ¸¸æˆç½‘æ ¼
+                    Column.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // æ–¹å‘æ§åˆ¶
+                        Column.create();
+                        // æ–¹å‘æ§åˆ¶
+                        Column.margin({ bottom: 20 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // ä¸Šæ–¹å‘é”®
+                        Row.create();
+                        // ä¸Šæ–¹å‘é”®
+                        Row.justifyContent(FlexAlign.Center);
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('â†‘');
+                        Button.onClick(() => this.handleDirectionButton('up'));
+                        Button.width(90);
+                        Button.height(70);
+                        Button.backgroundColor(0x4CAF50);
+                        Button.fontColor(Color.White);
+                        Button.fontSize(28);
+                        Button.margin({ bottom: 5 });
+                    }, Button);
+                    Button.pop();
+                    // ä¸Šæ–¹å‘é”®
+                    Row.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // å·¦ã€ä¸‹ã€å³æ–¹å‘é”®
+                        Row.create();
+                        // å·¦ã€ä¸‹ã€å³æ–¹å‘é”®
+                        Row.justifyContent(FlexAlign.Center);
+                        // å·¦ã€ä¸‹ã€å³æ–¹å‘é”®
+                        Row.margin({ top: 5 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('â†');
+                        Button.onClick(() => this.handleDirectionButton('left'));
+                        Button.width(90);
+                        Button.height(70);
+                        Button.backgroundColor(0x2196F3);
+                        Button.fontColor(Color.White);
+                        Button.fontSize(28);
+                        Button.margin({ right: 20 });
+                    }, Button);
+                    Button.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('â†“');
+                        Button.onClick(() => this.handleDirectionButton('down'));
+                        Button.width(90);
+                        Button.height(70);
+                        Button.backgroundColor(0xFF9800);
+                        Button.fontColor(Color.White);
+                        Button.fontSize(28);
+                        Button.margin({ right: 20 });
+                    }, Button);
+                    Button.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('â†’');
+                        Button.onClick(() => this.handleDirectionButton('right'));
+                        Button.width(90);
+                        Button.height(70);
+                        Button.backgroundColor(0xF44336);
+                        Button.fontColor(Color.White);
+                        Button.fontSize(28);
+                    }, Button);
+                    Button.pop();
+                    // å·¦ã€ä¸‹ã€å³æ–¹å‘é”®
+                    Row.pop();
+                    // æ–¹å‘æ§åˆ¶
+                    Column.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // æ§åˆ¶æŒ‰é’®
+                        Row.create();
+                        // æ§åˆ¶æŒ‰é’®
+                        Row.margin({ bottom: 20 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel(this.paused ? 'ç»§ç»­' : 'æš‚åœ');
+                        Button.onClick(() => this.togglePause());
+                        Button.backgroundColor(this.paused ? Color.Green : Color.Orange);
+                        Button.width(100);
+                        Button.height(40);
+                        Button.margin({ right: 20 });
+                    }, Button);
+                    Button.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('è¿”å›èœå•');
+                        Button.onClick(() => this.backToDifficultySelection());
+                        Button.backgroundColor(0x800080);
+                        Button.fontColor(Color.White);
+                        Button.width(120);
+                        Button.height(40);
+                    }, Button);
+                    Button.pop();
+                    // æ§åˆ¶æŒ‰é’®
+                    Row.pop();
+                    Column.pop();
+                });
+            }
+            // æ¸¸æˆè¯´æ˜
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // æ¸¸æˆè¯´æ˜
+            Column.create();
+            // æ¸¸æˆè¯´æ˜
+            Column.margin({ top: 10, bottom: 20 });
+            // æ¸¸æˆè¯´æ˜
+            Column.padding(10);
+            // æ¸¸æˆè¯´æ˜
+            Column.border({ width: 1, color: Color.Gray });
+            // æ¸¸æˆè¯´æ˜
+            Column.width('90%');
+            // æ¸¸æˆè¯´æ˜
+            Column.alignSelf(ItemAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('æ¸¸æˆè¯´æ˜:');
+            Text.fontSize(16);
+            Text.fontWeight(FontWeight.Bold);
+            Text.margin({ bottom: 5 });
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('1. é€‰æ‹©éš¾åº¦çº§åˆ«å¼€å§‹æ¸¸æˆ');
+            Text.fontSize(14);
+            Text.fontColor(Color.Gray);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('2. æ–¹å‘é”®æ§åˆ¶è›‡ç§»åŠ¨ï¼ˆç«‹å³å“åº”ï¼‰');
+            Text.fontSize(14);
+            Text.fontColor(Color.Gray);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('3. 10Ã—10å›ºå®šåœºåœ°ï¼Œé£Ÿç‰©åªåœ¨å†…åœˆå‡ºç°');
+            Text.fontSize(14);
+            Text.fontColor(Color.Gray);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('4. å‰5å…³åƒ5ä¸ªè¿‡å…³ï¼Œå5å…³åƒ10ä¸ªè¿‡å…³');
+            Text.fontSize(14);
+            Text.fontColor(Color.Gray);
+        }, Text);
+        Text.pop();
+        // æ¸¸æˆè¯´æ˜
+        Column.pop();
+        Column.pop();
+        Scroll.pop();
+    }
+    rerender() {
+        this.updateDirtyElements();
+    }
+    static getEntryName() {
+        return "Index";
+    }
+}
+registerNamedRoute(() => new Index(undefined, {}), "", { bundleName: "com.example.myapplication", moduleName: "entry", pagePath: "pages/Index", pageFullPath: "entry/src/main/ets/pages/Index", integratedHsp: "false" });
+//# sourceMappingURL=Index.js.mapÂÙ5D:\xiangmuuuuuuuuu\entry\src\main\ets\pages\Index.etsÔrBšªmoduleName±isLocalDependency¯isNodeEntryFile§pkgPath±belongProjectPath§pkgNameªpkgVersion±dependencyPkgInfo°belongModulePath¯hostModulesInfo¥entryÃÂ¸D:\xiangmuuuuuuuuu\entry²D:\xiangmuuuuuuuuu¥entry¥1.0.0Ô  ¸D:\xiangmuuuuuuuuu\entryÃÚMC/*
+ * è´ªåƒè›‡æ¸¸æˆ - ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡ï¼ˆ10Ã—10å›ºå®šåœºåœ°ç‰ˆæœ¬ï¼‰
+ */
+
+@Entry
+@Component
+struct Index {
+  // æ¸¸æˆé…ç½® - 10Ã—10å›ºå®šåœºåœ°
+  gridSize: number = 10 // 10Ã—10çš„åœºåœ°
+  cellSize: number = 28 // æ¯ä¸ªæ ¼å­28åƒç´ ï¼ˆæ›´å¤§ä¸€äº›ï¼‰
+
+  // æ¸¸æˆçŠ¶æ€
+  @State snake: Array<[number, number]> = [[5, 5], [4, 5], [3, 5]] // åˆå§‹åœ¨ä¸­å¿ƒ
+  @State food: [number, number] = [7, 5]
+  @State currentDirection: string = 'right' // å½“å‰ç§»åŠ¨æ–¹å‘
+  @State queuedDirection: string = 'right'  // æ’é˜Ÿçš„ä¸‹ä¸€ä¸ªæ–¹å‘
+  @State gameOver: boolean = false
+  @State score: number = 0
+  @State paused: boolean = false
+  @State message: string = 'ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡'
+  @State difficulty: number = 5
+  @State isSelectingDifficulty: boolean = true
+  @State foodEaten: number = 0
+  @State levelComplete: boolean = false
+  @State maxFoodTarget: number = 5
+  @State isMoving: boolean = false
+
+  // æ¸¸æˆè®¡æ—¶
+  gameSpeed: number = 300
+  timerId: number = 0
+  lastMoveTime: number = 0
+
+  // å­˜å‚¨æ¯ä¸ªæ ¼å­çš„çŠ¶æ€
+  @State gridData: Array<Array<string>> = []
+
+  // éš¾åº¦é…ç½®
+  difficultySpeeds: number[] = [500, 450, 400, 350, 300, 250, 200, 150, 100, 50]
+
+  // ç”Ÿå‘½å‘¨æœŸ
+  aboutToAppear() {
+    this.initializeGrid()
+  }
+
+  aboutToDisappear() {
+    this.stopGame()
+  }
+
+  // åˆå§‹åŒ–ç½‘æ ¼
+  initializeGrid() {
+    // å¿«é€Ÿåˆå§‹åŒ–10Ã—10ç©ºç½‘æ ¼
+    let newGrid: Array<Array<string>> = []
+    for (let i = 0; i < this.gridSize; i++) {
+      newGrid.push(Array(this.gridSize).fill('empty'))
+    }
+    this.gridData = newGrid
+
+    // å»¶è¿Ÿåˆå§‹åŒ–æ¸¸æˆçŠ¶æ€
+    setTimeout(() => {
+      this.updateGrid()
+    }, 50)
+  }
+
+  // åœæ­¢æ¸¸æˆ
+  stopGame() {
+    if (this.timerId > 0) {
+      clearInterval(this.timerId)
+      this.timerId = 0
+    }
+    this.isMoving = false
+  }
+
+  // å¼€å§‹æ¸¸æˆ
+  startGame() {
+    this.stopGame()
+
+    // è®¾ç½®æ¸¸æˆé€Ÿåº¦
+    this.gameSpeed = this.difficultySpeeds[this.difficulty - 1]
+    this.maxFoodTarget = this.difficulty <= 5 ? 5 : 10
+    this.lastMoveTime = new Date().getTime()
+
+    // å¼€å§‹æ¸¸æˆå¾ªç¯ï¼ˆ60FPSï¼‰
+    this.timerId = setInterval(() => {
+      this.gameLoop()
+    }, 16)
+  }
+
+  // æ¸¸æˆä¸»å¾ªç¯
+  gameLoop() {
+    if (this.paused || this.gameOver || this.isSelectingDifficulty || this.levelComplete) return
+
+    const currentTime = new Date().getTime()
+    const elapsed = currentTime - this.lastMoveTime
+
+    if (elapsed >= this.gameSpeed && !this.isMoving) {
+      this.isMoving = true
+      this.moveSnake()
+      this.lastMoveTime = currentTime
+      this.isMoving = false
+    }
+  }
+
+  // ç§»åŠ¨è›‡ - æ ¸å¿ƒé€»è¾‘
+  moveSnake() {
+    // åœ¨ç§»åŠ¨å‰ç«‹å³åº”ç”¨æ’é˜Ÿçš„ä¸‹ä¸€ä¸ªæ–¹å‘
+    this.currentDirection = this.queuedDirection
+
+    let headX = this.snake[0][0]
+    let headY = this.snake[0][1]
+
+    // è®¡ç®—ä¸‹ä¸€ä¸ªä½ç½®
+    switch (this.currentDirection) {
+      case 'up':
+        headY -= 1
+        break
+      case 'down':
+        headY += 1
+        break
+      case 'left':
+        headX -= 1
+        break
+      case 'right':
+        headX += 1
+        break
+    }
+
+    // è¾¹ç•Œæ£€æŸ¥ï¼ˆ10Ã—10åœºåœ°ï¼‰
+    if (headX < 0 || headX >= this.gridSize || headY < 0 || headY >= this.gridSize) {
+      this.endGame()
+      return
+    }
+
+    // ç¢°æ’æ£€æŸ¥
+    for (let i = 0; i < this.snake.length; i++) {
+      if (this.snake[i][0] === headX && this.snake[i][1] === headY) {
+        this.endGame()
+        return
+      }
+    }
+
+    // åˆ›å»ºæ–°è›‡
+    let newSnake: Array<[number, number]> = [[headX, headY]]
+
+    // æ£€æŸ¥æ˜¯å¦åƒåˆ°é£Ÿç‰©
+    if (headX === this.food[0] && headY === this.food[1]) {
+      // åƒåˆ°é£Ÿç‰©ï¼Œè›‡å˜é•¿
+      for (let i = 0; i < this.snake.length; i++) {
+        newSnake.push(this.snake[i])
+      }
+
+      this.score += 10
+      this.foodEaten += 1
+      this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`
+
+      if (this.foodEaten >= this.maxFoodTarget) {
+        this.completeLevel()
+        return
+      }
+
+      // ç”Ÿæˆæ–°é£Ÿç‰©ï¼ˆåªåœ¨å†…éƒ¨9Ã—9åŒºåŸŸï¼‰
+      this.generateFood(newSnake)
+    } else {
+      // æ²¡åƒåˆ°é£Ÿç‰©ï¼Œæ­£å¸¸ç§»åŠ¨
+      for (let i = 0; i < this.snake.length - 1; i++) {
+        newSnake.push(this.snake[i])
+      }
+    }
+
+    this.snake = newSnake
+    this.updateGrid()
+  }
+
+  // ç”Ÿæˆé£Ÿç‰© - åªåœ¨å†…éƒ¨9Ã—9åŒºåŸŸå‡ºç°
+  generateFood(snake: Array<[number, number]>) {
+    let attempts = 0
+    let found = false
+    let newFood: [number, number] = [1, 1] // é»˜è®¤åœ¨å†…éƒ¨åŒºåŸŸ
+
+    while (!found && attempts < 100) {
+      // åªåœ¨1-8çš„èŒƒå›´å†…ç”Ÿæˆé£Ÿç‰©ï¼ˆé¿å¼€æœ€å¤–å›´çš„0å’Œ9ï¼‰
+      // è¿™æ ·é£Ÿç‰©åªä¼šå‡ºç°åœ¨å†…éƒ¨çš„9Ã—9åŒºåŸŸï¼ˆåæ ‡1-8ï¼‰
+      newFood = [
+        Math.floor(Math.random() * 8) + 1, // 1-8
+        Math.floor(Math.random() * 8) + 1  // 1-8
+      ]
+
+      found = true
+      for (let i = 0; i < snake.length; i++) {
+        if (snake[i][0] === newFood[0] && snake[i][1] === newFood[1]) {
+          found = false
+          break
+        }
+      }
+
+      attempts++
+    }
+
+    this.food = newFood
+  }
+
+  // æ›´æ–°ç½‘æ ¼æ•°æ®
+  updateGrid() {
+    let newGrid: Array<Array<string>> = []
+
+    // åˆ›å»º10Ã—10ç½‘æ ¼
+    for (let row = 0; row < this.gridSize; row++) {
+      let rowData: Array<string> = []
+      for (let col = 0; col < this.gridSize; col++) {
+        let cellType = 'empty'
+
+        // æ£€æŸ¥æ˜¯å¦æ˜¯é£Ÿç‰©
+        if (col === this.food[0] && row === this.food[1]) {
+          cellType = 'food'
+        }
+
+        rowData.push(cellType)
+      }
+      newGrid.push(rowData)
+    }
+
+    // æ”¾ç½®è›‡
+    for (let i = 0; i < this.snake.length; i++) {
+      const segment = this.snake[i]
+      const x = segment[0]
+      const y = segment[1]
+      if (x >= 0 && x < this.gridSize && y >= 0 && y < this.gridSize) {
+        newGrid[y][x] = i === 0 ? 'snakeHead' : 'snakeBody'
+      }
+    }
+
+    this.gridData = newGrid
+  }
+
+  // å®Œæˆå…³å¡
+  completeLevel() {
+    this.levelComplete = true
+    this.stopGame()
+    this.message = `æ­å–œï¼å®Œæˆç¬¬${this.difficulty}çº§å…³å¡`
+  }
+
+  // ç»“æŸæ¸¸æˆ
+  endGame() {
+    this.gameOver = true
+    this.stopGame()
+    this.message = 'æ¸¸æˆç»“æŸ'
+  }
+
+  // ç«‹å³å“åº”æ–¹å‘æ”¹å˜
+  changeDirectionImmediate(newDir: string) {
+    if (this.isSelectingDifficulty || this.gameOver || this.levelComplete || this.paused) {
+      return
+    }
+
+    // é˜²æ­¢ç›´æ¥åå‘ç§»åŠ¨
+    if ((this.currentDirection === 'up' && newDir === 'down') ||
+      (this.currentDirection === 'down' && newDir === 'up') ||
+      (this.currentDirection === 'left' && newDir === 'right') ||
+      (this.currentDirection === 'right' && newDir === 'left')) {
+      return
+    }
+
+    // ç«‹å³è®¾ç½®æ’é˜Ÿçš„æ–¹å‘
+    this.queuedDirection = newDir
+  }
+
+  // æ–¹å‘æŒ‰é’®ç‚¹å‡»å¤„ç†
+  handleDirectionButton(direction: string) {
+    // ç«‹å³æ”¹å˜æ’é˜Ÿçš„æ–¹å‘
+    this.changeDirectionImmediate(direction)
+
+    // å¦‚æœæ¸¸æˆæš‚åœï¼ŒæŒ‰æ–¹å‘é”®å°±è‡ªåŠ¨ç»§ç»­
+    if (this.paused && !this.isSelectingDifficulty && !this.gameOver && !this.levelComplete) {
+      this.togglePause()
+    }
+  }
+
+  // é€‰æ‹©éš¾åº¦å¹¶å¼€å§‹æ¸¸æˆ
+  startWithDifficulty(level: number) {
+    this.difficulty = level
+    this.isSelectingDifficulty = false
+    this.gameOver = false
+    this.levelComplete = false
+    this.foodEaten = 0
+    this.score = 0
+    this.currentDirection = 'right'
+    this.queuedDirection = 'right'
+    this.snake = [[5, 5], [4, 5], [3, 5]]
+    // åˆå§‹é£Ÿç‰©ä¹Ÿåœ¨å†…éƒ¨åŒºåŸŸ
+    this.food = [7, 5] // ç¡®ä¿åœ¨å†…éƒ¨åŒºåŸŸ
+    this.startGame()
+    this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`
+  }
+
+  // è¿”å›éš¾åº¦é€‰æ‹©
+  backToDifficultySelection() {
+    this.stopGame()
+    this.snake = [[5, 5], [4, 5], [3, 5]]
+    this.food = [7, 5] // å†…éƒ¨åŒºåŸŸ
+    this.currentDirection = 'right'
+    this.queuedDirection = 'right'
+    this.gameOver = false
+    this.levelComplete = false
+    this.score = 0
+    this.foodEaten = 0
+    this.paused = false
+    this.message = 'ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡'
+    this.isSelectingDifficulty = true
+    this.updateGrid()
+  }
+
+  // é‡ç½®æ¸¸æˆ
+  resetGame() {
+    this.stopGame()
+    this.snake = [[5, 5], [4, 5], [3, 5]]
+    this.food = [7, 5] // å†…éƒ¨åŒºåŸŸ
+    this.currentDirection = 'right'
+    this.queuedDirection = 'right'
+    this.gameOver = false
+    this.levelComplete = false
+    this.score = 0
+    this.foodEaten = 0
+    this.paused = false
+    this.isSelectingDifficulty = true
+    this.message = 'ã€Šç‰æ•£æ±Ÿä½œä¸šã€‹è´ªåƒè›‡'
+    this.updateGrid()
+  }
+
+  // ç»§ç»­ä¸‹ä¸€å…³
+  nextLevel() {
+    this.stopGame()
+    if (this.difficulty < 10) {
+      this.difficulty += 1
+    }
+    this.snake = [[5, 5], [4, 5], [3, 5]]
+    this.currentDirection = 'right'
+    this.queuedDirection = 'right'
+    this.gameOver = false
+    this.levelComplete = false
+    this.foodEaten = 0
+    this.paused = false
+    this.isSelectingDifficulty = false
+    // ç”Ÿæˆæ–°é£Ÿç‰©ï¼ˆåœ¨å†…éƒ¨åŒºåŸŸï¼‰
+    this.generateFood(this.snake)
+    this.startGame()
+    this.message = `åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§ | é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`
+  }
+
+  // æš‚åœ/ç»§ç»­
+  togglePause() {
+    if (this.isSelectingDifficulty || this.gameOver || this.levelComplete) return
+    this.paused = !this.paused
+  }
+
+  // è·å–å•å…ƒæ ¼æ˜¾ç¤ºå†…å®¹
+  getCellContent(cellType: string): string {
+    switch (cellType) {
+      case 'snakeHead': return 'â—'
+      case 'snakeBody': return 'â—‹'
+      case 'food': return 'â˜…'
+      default: return 'Â·'
+    }
+  }
+
+  // è·å–å•å…ƒæ ¼é¢œè‰²
+  getCellColor(cellType: string): ResourceColor {
+    switch (cellType) {
+      case 'snakeHead': return Color.Green
+      case 'snakeBody': return Color.Green
+      case 'food': return Color.Red
+      default: return Color.Gray
+    }
+  }
+
+  // è·å–å•å…ƒæ ¼å­—ä½“å¤§å°
+  getCellSize(cellType: string): number {
+    switch (cellType) {
+      case 'snakeHead': return this.cellSize
+      case 'snakeBody': return this.cellSize - 2
+      case 'food': return this.cellSize
+      default: return this.cellSize - 4
+    }
+  }
+
+  // è·å–éš¾åº¦æè¿°
+  getDifficultyDescription(level: number): string {
+    const descriptions = [
+      "è¶…æ…¢ - æ–°æ‰‹å‹å¥½ (åƒ5ä¸ª)",
+      "å¾ˆæ…¢ - é€‚åˆåˆå­¦è€… (åƒ5ä¸ª)",
+      "æ…¢é€Ÿ - è½»æ¾ä¸Šæ‰‹ (åƒ5ä¸ª)",
+      "è¾ƒæ…¢ - ç®€å•éš¾åº¦ (åƒ5ä¸ª)",
+      "ä¸­ç­‰ - æ ‡å‡†é€Ÿåº¦ (åƒ5ä¸ª)",
+      "è¾ƒå¿« - ç•¥æœ‰æŒ‘æˆ˜ (åƒ10ä¸ª)",
+      "å¿«é€Ÿ - éœ€è¦æŠ€å·§ (åƒ10ä¸ª)",
+      "å¾ˆå¿« - é«˜æ‰‹éš¾åº¦ (åƒ10ä¸ª)",
+      "æå¿« - ä¸“ä¸šç©å®¶ (åƒ10ä¸ª)",
+      "æé™ - æŒ‘æˆ˜ä¸å¯èƒ½ (åƒ10ä¸ª)"
+    ]
+    return descriptions[level - 1]
+  }
+
+  // è·å–éš¾åº¦é¢œè‰²
+  getDifficultyColor(level: number): ResourceColor {
+    if (level <= 3) return Color.Green
+    else if (level <= 6) return Color.Blue
+    else if (level <= 8) return Color.Orange
+    else return Color.Red
+  }
+
+  // ç”Ÿæˆéš¾åº¦çº§åˆ«æ•°ç»„
+  getDifficultyLevels(): number[] {
+    const levels: number[] = []
+    for (let i = 1; i <= 10; i++) {
+      levels.push(i)
+    }
+    return levels
+  }
+
+  build() {
+    Scroll() {
+      Column() {
+        // æ ‡é¢˜
+        Row() {
+          Text(this.message)
+            .fontSize(20)
+            .fontWeight(FontWeight.Bold)
+            .layoutWeight(1)
+            .textAlign(TextAlign.Center)
+        }
+        .width('100%')
+        .padding(10)
+
+        // æ¸¸æˆçŠ¶æ€
+        if (this.gameOver) {
+          Column() {
+            Text('æ¸¸æˆç»“æŸ!')
+              .fontSize(26)
+              .fontColor(Color.Red)
+              .margin({ bottom: 10 })
+
+            Text(`æœ€ç»ˆåˆ†æ•°: ${this.score}`)
+              .fontSize(20)
+              .margin({ bottom: 20 })
+
+            Button('é‡æ–°é€‰æ‹©éš¾åº¦')
+              .onClick(() => this.resetGame())
+              .backgroundColor(Color.Blue)
+              .width(150)
+              .height(40)
+              .margin({ bottom: 10 })
+          }
+          .width('100%')
+          .justifyContent(FlexAlign.Center)
+          .alignItems(HorizontalAlign.Center)
+          .margin({ bottom: 20 })
+        }
+        else if (this.levelComplete) {
+          Column() {
+            Text('æ­å–œè¿‡å…³!')
+              .fontSize(26)
+              .fontColor(Color.Green)
+              .margin({ bottom: 10 })
+
+            Text(`åˆ†æ•°: ${this.score} | éš¾åº¦: ${this.difficulty}çº§`)
+              .fontSize(20)
+              .margin({ bottom: 10 })
+
+            Text(`åƒäº† ${this.foodEaten} ä¸ªé£Ÿç‰©`)
+              .fontSize(18)
+              .margin({ bottom: 20 })
+
+            Row() {
+              Button('ç»§ç»­ä¸‹ä¸€å…³')
+                .onClick(() => this.nextLevel())
+                .backgroundColor(Color.Green)
+                .width(120)
+                .height(40)
+                .margin({ right: 20 })
+
+              Button('è¿”å›èœå•')
+                .onClick(() => this.backToDifficultySelection())
+                .backgroundColor(Color.Blue)
+                .width(120)
+                .height(40)
+            }
+          }
+          .width('100%')
+          .justifyContent(FlexAlign.Center)
+          .alignItems(HorizontalAlign.Center)
+          .margin({ bottom: 20 })
+        }
+        else if (this.isSelectingDifficulty) {
+          // éš¾åº¦é€‰æ‹©
+          Column() {
+            Text('è¯·é€‰æ‹©æ¸¸æˆéš¾åº¦')
+              .fontSize(24)
+              .fontWeight(FontWeight.Bold)
+              .margin({ bottom: 20 })
+              .fontColor(Color.Blue)
+
+            Text('çº§åˆ«è¶Šé«˜ï¼Œè›‡ç§»åŠ¨è¶Šå¿«')
+              .fontSize(16)
+              .fontColor(Color.Gray)
+              .margin({ bottom: 30 })
+
+            ForEach(this.getDifficultyLevels(), (level: number) => {
+              Button(`${level}çº§ - ${this.getDifficultyDescription(level)}`)
+                .onClick(() => this.startWithDifficulty(level))
+                .backgroundColor(this.getDifficultyColor(level))
+                .fontColor(Color.White)
+                .width('90%')
+                .height(45)
+                .margin({ bottom: 8 })
+            })
+
+            Text(`å½“å‰é€‰æ‹©: ${this.difficulty}çº§`)
+              .fontSize(16)
+              .margin({ top: 20 })
+              .fontColor(Color.Green)
+          }
+          .width('100%')
+          .padding(20)
+          .margin({ bottom: 20 })
+        }
+        else if (this.paused) {
+          Text('æ¸¸æˆæš‚åœ')
+            .fontSize(24)
+            .fontColor(Color.Orange)
+            .margin({ bottom: 10 })
+            .width('100%')
+            .textAlign(TextAlign.Center)
+        }
+
+        // æ¸¸æˆåŒºåŸŸ
+        if (!this.isSelectingDifficulty && !this.gameOver && !this.levelComplete) {
+          Column() {
+            // åˆ†æ•°å’ŒçŠ¶æ€
+            Row() {
+              Text(`åˆ†æ•°: ${this.score}`)
+                .fontSize(18)
+                .fontColor(Color.Blue)
+                .layoutWeight(1)
+
+              Text(`éš¾åº¦: ${this.difficulty}çº§`)
+                .fontSize(18)
+                .fontColor(this.getDifficultyColor(this.difficulty))
+            }
+            .width('100%')
+            .margin({ bottom: 5 })
+
+            Row() {
+              Text(`é£Ÿç‰©: ${this.foodEaten}/${this.maxFoodTarget}`)
+                .fontSize(18)
+                .fontColor(Color.Red)
+                .layoutWeight(1)
+
+              Text(`ç›®æ ‡: ${this.difficulty <= 5 ? '5ä¸ª' : '10ä¸ª'}`)
+                .fontSize(18)
+                .fontColor(0x800080)
+            }
+            .width('100%')
+            .margin({ bottom: 10 })
+
+            // 10Ã—10æ¸¸æˆç½‘æ ¼
+            Column() {
+              ForEach(this.gridData, (rowData: string[]) => {
+                Row() {
+                  ForEach(rowData, (cellType: string) => {
+                    Text(this.getCellContent(cellType))
+                      .fontSize(this.getCellSize(cellType))
+                      .fontColor(this.getCellColor(cellType))
+                      .width(this.cellSize)
+                      .height(this.cellSize)
+                      .textAlign(TextAlign.Center)
+                  })
+                }
+              })
+            }
+            .border({ width: 2, color: Color.Black })
+            .backgroundColor(Color.White)
+            .padding(5)
+            .margin({ bottom: 20 })
+
+            // æ–¹å‘æ§åˆ¶
+            Column() {
+              // ä¸Šæ–¹å‘é”®
+              Row() {
+                Button('â†‘')
+                  .onClick(() => this.handleDirectionButton('up'))
+                  .width(90)
+                  .height(70)
+                  .backgroundColor(0x4CAF50)
+                  .fontColor(Color.White)
+                  .fontSize(28)
+                  .margin({ bottom: 5 })
+              }
+              .justifyContent(FlexAlign.Center)
+
+              // å·¦ã€ä¸‹ã€å³æ–¹å‘é”®
+              Row() {
+                Button('â†')
+                  .onClick(() => this.handleDirectionButton('left'))
+                  .width(90)
+                  .height(70)
+                  .backgroundColor(0x2196F3)
+                  .fontColor(Color.White)
+                  .fontSize(28)
+                  .margin({ right: 20 })
+
+                Button('â†“')
+                  .onClick(() => this.handleDirectionButton('down'))
+                  .width(90)
+                  .height(70)
+                  .backgroundColor(0xFF9800)
+                  .fontColor(Color.White)
+                  .fontSize(28)
+                  .margin({ right: 20 })
+
+                Button('â†’')
+                  .onClick(() => this.handleDirectionButton('right'))
+                  .width(90)
+                  .height(70)
+                  .backgroundColor(0xF44336)
+                  .fontColor(Color.White)
+                  .fontSize(28)
+              }
+              .justifyContent(FlexAlign.Center)
+              .margin({ top: 5 })
+            }
+            .margin({ bottom: 20 })
+
+            // æ§åˆ¶æŒ‰é’®
+            Row() {
+              Button(this.paused ? 'ç»§ç»­' : 'æš‚åœ')
+                .onClick(() => this.togglePause())
+                .backgroundColor(this.paused ? Color.Green : Color.Orange)
+                .width(100)
+                .height(40)
+                .margin({ right: 20 })
+
+              Button('è¿”å›èœå•')
+                .onClick(() => this.backToDifficultySelection())
+                .backgroundColor(0x800080)
+                .fontColor(Color.White)
+                .width(120)
+                .height(40)
+            }
+            .margin({ bottom: 20 })
+          }
+        }
+
+        // æ¸¸æˆè¯´æ˜
+        Column() {
+          Text('æ¸¸æˆè¯´æ˜:')
+            .fontSize(16)
+            .fontWeight(FontWeight.Bold)
+            .margin({ bottom: 5 })
+
+          Text('1. é€‰æ‹©éš¾åº¦çº§åˆ«å¼€å§‹æ¸¸æˆ')
+            .fontSize(14)
+            .fontColor(Color.Gray)
+
+          Text('2. æ–¹å‘é”®æ§åˆ¶è›‡ç§»åŠ¨ï¼ˆç«‹å³å“åº”ï¼‰')
+            .fontSize(14)
+            .fontColor(Color.Gray)
+
+          Text('3. 10Ã—10å›ºå®šåœºåœ°ï¼Œé£Ÿç‰©åªåœ¨å†…åœˆå‡ºç°')
+            .fontSize(14)
+            .fontColor(Color.Gray)
+
+          Text('4. å‰5å…³åƒ5ä¸ªè¿‡å…³ï¼Œå5å…³åƒ10ä¸ªè¿‡å…³')
+            .fontSize(14)
+            .fontColor(Color.Gray)
+        }
+        .margin({ top: 10, bottom: 20 })
+        .padding(10)
+        .border({ width: 1, color: Color.Gray })
+        .width('90%')
+        .alignSelf(ItemAlign.Center)
+      }
+      .width('100%')
+      .padding(20)
+      .backgroundColor(0xF0F8FF)
+      .justifyContent(FlexAlign.Start)
+      .alignItems(HorizontalAlign.Center)
+    }
+    .width('100%')
+    .height('100%')
+    .scrollable(ScrollDirection.Vertical)
+    .scrollBar(BarState.On)
+  }
+}ÀA’ÔrC–§version¤fileªsourceRoot§sources¥names¨mappings¨Index.js ‘©Index.etsÜù’” ” ‘”  ”” ” ” ”& #”” 	” 	” 	”, 	)Ü ”4 *”5 +”6 ,”7 -”9 /”: 0”; 1”= 3”> 4”? 5”ÌA 7”ÌB 8”ÌC 9”ÌE ;”ÌF <”ÌG =”ÌI ?”ÌJ Ì@”ÌK ÌA”ÌL ÌB”ÌM ÌC”ÌU ÌK–”3 "”4 #”5 $”7 &”8 '”9 (””? $”ÌF +”ÌG ,”ÌP 5””> #”ÌE *”ÌF ,”ÌQ 7’”7 ”< "’”4 ”5 ’”5 ”:  ’”6 ”ÌB '’”9 ”: ’”ÌD *”ÌH .’”8 ”9 ’”< "”ÌA '’”< !”= "’”7 ”< "’” ” 	’” ” ’” ” ’” ” ’”7 !*”9 !,’” #” #	Ü ”  $”! $ ”$ $#”& $%”) $(”+ $*”. $-”0 $/”3 $2”5 $4”8 $7”: $9”= $<”? $>”ÌB $ÌA”ÌD $ÌC”ÌG $ÌF”ÌI $ÌH”ÌL $ÌK”ÌN $ÌM”ÌP $ÌO”ÌQ $ÌP‘”   ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” !	” !’” !	” !’” &” &	’” '” '–” (” (” (	” (” (” (’” )” )’” +” +–” ,” ,” ,	” ,” ,” ,’” -” -’” /” /
+’” 0” 0’” 1” 1–” 2” 2” 2” 2(” 2*” 2*Ü ” 3” 3	” 3” 3” 3” 3” 3” 3” 3”  3”! 3”) 3%”+ 3'”, 3(”. 3*”0 3,Ü ” 4” 4” 4” 4” 4” 4” 4”# 4”$ 4”, 4&”- 4'”. 4(”2 4,”3 4-”: 44”; 45”< 46”= 46‘”	 5—” 6” 6” 6	” 6” 6” 6”  6’” 8” 8•” 9” 9” 9” 9” 9–” :” :
+” :” :” :” :–” ;”	 ;” ;” ;	” ;
+” ;
+’” <” <’” >” >	’” ?” ?
+˜” Ì@” Ì@” Ì@” Ì@” Ì@” Ì@” Ì@” Ì@˜” ÌA” ÌA” ÌA” ÌA” ÌA”& ÌA ”' ÌA!”( ÌA!—” ÌB” ÌB
+” ÌB” ÌB” ÌB” ÌB” ÌB‘”	 ÌC—” ÌD” ÌD” ÌD	” ÌD” ÌD” ÌD” ÌD’” ÌE” ÌE’” ÌG” ÌG	’” ÌH” ÌH–” ÌI” ÌI” ÌI	” ÌI” ÌI” ÌI’” ÌK” ÌKÜ ” ÌL” ÌL” ÌL	” ÌL” ÌL” ÌL” ÌL”. ÌL*”/ ÌL+”3 ÌL/”4 ÌL0”> ÌL:”ÌA ÌL=”ÌB ÌL>”ÌC ÌL?”ÌD ÌL?Ü ” ÌM” ÌM” ÌM	” ÌM” ÌM”! ÌM”" ÌM”, ÌM(”0 ÌM,”1 ÌM-”2 ÌM.”3 ÌM/”4 ÌM0”5 ÌM1”6 ÌM2”7 ÌM3”8 ÌM4”: ÌM6”; ÌM6œ” ÌN” ÌN” ÌN	” ÌN” ÌN”  ÌN”$ ÌN ”& ÌN"”' ÌN#”. ÌN*”0 ÌN,”1 ÌN,’” ÌP” ÌP™” ÌQ” ÌQ” ÌQ	” ÌQ” ÌQ”" ÌQ”# ÌQ”& ÌQ"”( ÌQ$–” ÌR” ÌR
+” ÌR” ÌR” ÌR” ÌR–” ÌS”	 ÌS” ÌS” ÌS	” ÌS
+” ÌS
+’” ÌT” ÌT’” ÌV” ÌV
+’” ÌW” ÌW
+Ü ” ÌX” ÌX” ÌX” ÌX” ÌX” ÌX” ÌX”  ÌX”( ÌX$”, ÌX(”0 ÌX,”1 ÌX-”ÌF ÌXÌB”ÌJ ÌXÌF”ÌN ÌXÌJ”ÌO ÌXÌK”Ì\ ÌXÌX’” ÌXÌZ” ÌXÌ`›” ÌZ” ÌZ
+” ÌZ” ÌZ”  ÌZ”$ ÌZ ”& ÌZ"”' ÌZ#”. ÌZ*”0 ÌZ,”1 ÌZ,š” Ì[” Ì[
+” Ì[” Ì[”# Ì[”& Ì["”* Ì[&”+ Ì['”7 Ì[3”8 Ì[3” Ì]” Ì]” Ì]” Ì]” Ì]” Ì]”% Ì]!”) Ì]%”* Ì]&”. Ì]*”/ Ì]+”7 Ì]3”9 Ì]5—” Ì^” Ì^
+” Ì^” Ì^” Ì^”  Ì^”! Ì^–” Ì_” Ì_
+” Ì_” Ì_” Ì_” Ì_—” Ì`” Ì`
+” Ì`” Ì`”  Ì`”+ Ì`%”, Ì`%—” Ìa” Ìa
+” Ìa” Ìa” Ìa”! Ìa”" Ìa‘”	 Ìb’” Ìc” Ìc’” Ìe” Ìe’” Ìf” Ìf’” Ìg” Ìg™” Ìh” Ìh” Ìh	” Ìh”  Ìh”$ Ìh ”% Ìh!”4 Ìh0”5 Ìh0” Ìj” Ìj” Ìj” Ìj” Ìj” Ìj” Ìj” Ìj”  Ìj”! Ìj”" Ìj”# Ìj”$ Ìj ”% Ìj ” Ìk” Ìk” Ìk” Ìk” Ìk” Ìk” Ìk” Ìk”  Ìk”! Ìk”" Ìk”# Ìk”$ Ìk ”% Ìk ’” Ìm” Ìm–” Ìn” Ìn” Ìn” Ìn”% Ìn!”' Ìn#“” Ìo” Ìo” Ìo•” Ìp” Ìp” Ìp” Ìp” Ìp’” Ìq” Ìq“” Ìr” Ìr” Ìr•” Ìs” Ìs” Ìs” Ìs” Ìs’” Ìt” Ìt“” Ìu” Ìu” Ìu•” Ìv” Ìv” Ìv” Ìv” Ìv’” Ìw” Ìw“” Ìx” Ìx” Ìx•” Ìy” Ìy” Ìy” Ìy” Ìy’” Ìz” Ìz‘”	 Ì{’” Ì}” Ì}Ü ” Ì~” Ì~” Ì~” Ì~” Ì~” Ì~” Ì~”" Ì~”& Ì~"”' Ì~#”/ Ì~+”3 Ì~/”8 Ì~4”; Ì~7”< Ì~8”Ì@ Ì~<”ÌE Ì~ÌA”ÌI Ì~ÌE”ÌM Ì~ÌI”ÌN Ì~ÌJ”ÌV Ì~ÌR”ÌX Ì~ÌT–” Ì” Ì
+” Ì” Ì” Ì” Ì’” Ì€” Ì€‘”	 Ì’” Ìƒ” ÌƒÜ ” Ì„” Ì„	” Ì„” Ì„” Ì„” Ì„” Ì„” Ì„” Ì„”  Ì„”! Ì„”& Ì„"”' Ì„#”- Ì„)”/ Ì„+”0 Ì„,”2 Ì„.”4 Ì„0Ü ” Ì…” Ì…
+” Ì…” Ì…” Ì…” Ì…” Ì…” Ì…” Ì…” Ì…”  Ì…”% Ì…”* Ì…$”. Ì…(”2 Ì…,”3 Ì…-”8 Ì…2”9 Ì…3”: Ì…4”; Ì…5”< Ì…6”= Ì…7”> Ì…8”ÌC Ì…=”ÌH Ì…ÌB”ÌJ Ì…ÌD–” Ì†” Ì†” Ì†” Ì†” Ì†” Ì†’” Ì‡” Ì‡‘” Ìˆ‘”	 Ì‰’” Ì‹” Ì‹œ” ÌŒ” ÌŒ” ÌŒ” ÌŒ,” ÌŒ-” ÌŒ.” ÌŒ3”  ÌŒ5”% ÌŒ:”& ÌŒ;”' ÌŒ<”( ÌŒ<’” Ì” ÌÜ ” Ì” Ì” Ì” Ì” Ì” Ì” Ì”  Ì”! Ì”" Ì”& Ì"”+ Ì'”0 Ì,”4 Ì0”5 Ì1”9 Ì5”: Ì6”; Ì7”< Ì8”> Ì:’” Ì” ÌÜ ” Ì‘” Ì‘” Ì‘” Ì‘” Ì‘” Ì‘” Ì‘” Ì‘”  Ì‘”$ Ì‘”% Ì‘”* Ì‘$”+ Ì‘%”1 Ì‘+”3 Ì‘-”4 Ì‘.”6 Ì‘0”8 Ì‘2” Ì’” Ì’” Ì’” Ì’” Ì’”" Ì’”# Ì’”( Ì’ ”) Ì’!”* Ì’"”+ Ì’#”, Ì’$”- Ì’$‘” Ì“—” Ì•” Ì•
+” Ì•” Ì•” Ì•” Ì•” Ì•—” Ì–” Ì–
+” Ì–” Ì–” Ì–” Ì–”  Ì–Ü ” Ì—” Ì—
+” Ì—” Ì—” Ì—”" Ì—”& Ì— ”' Ì—!”, Ì—&”6 Ì—0”: Ì—4”; Ì—5”ÌE Ì—?”ÌP Ì—ÌJ”ÌT Ì—ÌN”ÌU Ì—ÌO”Ì^ Ì—ÌX”Ìb Ì—Ì\”Ìf Ì—Ì`”Ìg Ì—Ìa”Ìt Ì—Ìn”Ìv Ì—Ìp”Ìw Ì—Ìpš” Ì™” Ì™
+” Ì™” Ì™” Ì™”" Ì™”& Ì™ ”' Ì™!”4 Ì™.”6 Ì™0–” Ìš” Ìš” Ìš”" Ìš”$ Ìš”% Ìš’” Ì›” Ì›‘” Ìœ’” Ì” Ì˜” ÌŸ” ÌŸ
+” ÌŸ” ÌŸ” ÌŸ”& ÌŸ ”' ÌŸ!”( ÌŸ!‘”	 Ì ‘” Ì ’” Ì¡” Ì¡Ü ” Ì¢” Ì¢” Ì¢” Ì¢” Ì¢” Ì¢” Ì¢” Ì¢”  Ì¢”$ Ì¢”% Ì¢”* Ì¢$”+ Ì¢%”1 Ì¢+”4 Ì¢.”5 Ì¢/”7 Ì¢1”8 Ì¢2”: Ì¢4”< Ì¢6” Ì£” Ì£” Ì£” Ì£” Ì£”" Ì£”# Ì£”( Ì£ ”) Ì£!”* Ì£"”+ Ì£#”, Ì£$”- Ì£$‘” Ì¤‘”	 Ì¥—” Ì§” Ì§” Ì§	” Ì§” Ì§” Ì§” Ì§–” Ì¨” Ì¨” Ì¨	” Ì¨” Ì¨” Ì¨’” Ì©” Ì©’” Ì«” Ì«”” Ì¬” Ì¬” Ì¬” Ì¬-–” Ì­” Ì­” Ì­” Ì­” Ì­” Ì­–” Ì®” Ì®” Ì®” Ì®” Ì®” Ì®œ” Ì¯” Ì¯” Ì¯” Ì¯$” Ì¯%” Ì¯&” Ì¯(” Ì¯)” Ì¯*” Ì¯*” Ì¯+”( Ì¯5™” Ì±” Ì±” Ì±” Ì±” Ì±”! Ì±”$ Ì± ”' Ì±#”) Ì±%’” Ì²”' Ì²!’” Ì³”' Ì³!“” Ì´” Ì´” Ì´” Ìµ” Ìµ” Ìµ” Ìµ” Ìµ” Ìµ”  Ìµ”& Ìµ”( Ìµ ”+ Ìµ#”, Ìµ$”- Ìµ%”0 Ìµ(”1 Ìµ)Ü ” Ì¶” Ì¶” Ì¶” Ì¶” Ì¶” Ì¶”  Ì¶”& Ì¶”( Ì¶ ”+ Ì¶#”, Ì¶$”- Ì¶%”0 Ì¶(”1 Ì¶)”2 Ì¶+”8 Ì¶1’” Ì·” Ì·•” Ì¹” Ì¹” Ì¹” Ì¹” Ì¹Ü ” Ìº” Ìº” Ìº” Ìº” Ìº” Ìº” Ìº” Ìº”  Ìº”% Ìº”& Ìº ”, Ìº&”. Ìº(”/ Ìº)”1 Ìº+”3 Ìº-Ü ” Ì»” Ì»” Ì»” Ì»” Ì»” Ì»” Ì»” Ì»” Ì»”$ Ì»”+ Ì»#”, Ì»$”- Ì»%”. Ì»&”2 Ì»*”7 Ì»/”8 Ì»0”9 Ì»1”: Ì»2”; Ì»3”< Ì»4”= Ì»5”ÌB Ì»:”ÌI Ì»ÌA”ÌJ Ì»ÌB”ÌK Ì»ÌC”ÌL Ì»ÌD”ÌN Ì»ÌF•” Ì¼
+” Ì¼” Ì¼”! Ì¼”" Ì¼’” Ì½
+” Ì½‘” Ì¾	‘” Ì¿”” ÌÁ” ÌÁ” ÌÁ” ÌÁ‘”	 ÌÂ—” ÌÄ” ÌÄ” ÌÄ	” ÌÄ” ÌÄ” ÌÄ” ÌÄ’” ÌÅ” ÌÅ’” ÌÇ” ÌÇ’” ÌÈ” ÌÈ–” ÌÉ” ÌÉ” ÌÉ” ÌÉ(” ÌÉ*” ÌÉ*’” ÌË” ÌËÜ ” ÌÌ” ÌÌ	” ÌÌ” ÌÌ” ÌÌ” ÌÌ” ÌÌ” ÌÌ”  ÌÌ”$ ÌÌ ”% ÌÌ!”- ÌÌ)”/ ÌÌ+”2 ÌÌ.”4 ÌÌ0”6 ÌÌ2–” ÌÍ” ÌÍ
+” ÌÍ” ÌÍ#” ÌÍ%” ÌÍ%Ü ” ÌÎ” ÌÎ” ÌÎ” ÌÎ” ÌÎ” ÌÎ” ÌÎ”! ÌÎ”$ ÌÎ”( ÌÎ"”) ÌÎ#”1 ÌÎ+”3 ÌÎ-”6 ÌÎ0”8 ÌÎ2”: ÌÎ4–” ÌÏ” ÌÏ” ÌÏ” ÌÏ”& ÌÏ”' ÌÏ’” ÌÑ” ÌÑÜ ” ÌÒ” ÌÒ” ÌÒ” ÌÒ”  ÌÒ”! ÌÒ”% ÌÒ”& ÌÒ”' ÌÒ”( ÌÒ ”, ÌÒ$”/ ÌÒ'”4 ÌÒ,”8 ÌÒ0”9 ÌÒ1”= ÌÒ5”> ÌÒ6”? ÌÒ7”Ì@ ÌÒ8”ÌB ÌÒ:•” ÌÓ
+” ÌÓ” ÌÓ”% ÌÓ”& ÌÓ‘” ÌÔ	˜” ÌÖ” ÌÖ” ÌÖ” ÌÖ” ÌÖ”% ÌÖ”& ÌÖ”' ÌÖ‘” Ì×˜” ÌØ” ÌØ” ÌØ” ÌØ” ÌØ”  ÌØ”! ÌØ”" ÌØ‘”	 ÌÙ’” ÌÛ” ÌÛ
+Ü ” ÌÜ” ÌÜ	” ÌÜ” ÌÜ” ÌÜ” ÌÜ” ÌÜ” ÌÜ” ÌÜ”  ÌÜ”! ÌÜ”& ÌÜ"”' ÌÜ#”- ÌÜ)”/ ÌÜ+”0 ÌÜ,”2 ÌÜ.”4 ÌÜ0›” Ìİ” Ìİ” Ìİ” Ìİ”  Ìİ”! Ìİ”& Ìİ ”' Ìİ!”( Ìİ"”) Ìİ#”* Ìİ#™” ÌŞ” ÌŞ” ÌŞ” ÌŞ” ÌŞ” ÌŞ” ÌŞ”  ÌŞ”! ÌŞ™” Ìß” Ìß” Ìß” Ìß” Ìß” Ìß” Ìß”  Ìß”! ÌßÜ ” Ìà” Ìà
+” Ìà” Ìà” Ìà” Ìà” Ìà” Ìà”" Ìà”# Ìà”+ Ìà%”/ Ìà)”0 Ìà*”4 Ìà.”5 Ìà/”9 Ìà3”: Ìà4”= Ìà7”ÌA Ìà;”ÌB Ìà<”ÌJ ÌàÌD”ÌL ÌàÌFÜ ” Ìá” Ìá” Ìá” Ìá” Ìá” Ìá” Ìá” Ìá”  Ìá”! Ìá”& Ìá”' Ìá”( Ìá ”) Ìá!”* Ìá"”5 Ìá-”6 Ìá.”7 Ìá/”8 Ìá0”ÌC Ìá;”ÌD Ìá;‘” Ìâ‘”	 Ìã—” Ìå” Ìå” Ìå	” Ìå” Ìå” Ìå”  Ìå’” Ìæ” Ìæ’” Ìè” Ìè	’” Ìé” Ìé—” Ìê” Ìê” Ìê	” Ìê” Ìê”! Ìê”" Ìê–” Ìë” Ìë” Ìë	” Ìë” Ìë” Ìë›” Ìì” Ìì” Ìì	” Ìì” Ìì”  Ìì”$ Ìì ”% Ìì!”/ Ìì+”4 Ìì0”5 Ìì0’” Ìí” Ìí’” Ìï” Ìï	’” Ìğ” Ìğ	—” Ìñ” Ìñ” Ìñ	” Ìñ” Ìñ” Ìñ” Ìñ–” Ìò” Ìò” Ìò	” Ìò” Ìò” Ìò—” Ìó” Ìó” Ìó	” Ìó” Ìó” Ìó” Ìó’” Ìô” Ìô’” Ìö” Ìö”” Ì÷” Ì÷” Ì÷”# Ì÷)Ü ” Ìø” Ìø” Ìø” Ìø”& Ìø"”* Ìø&”. Ìø*”/ Ìø+”7 Ìø3”; Ìø7”? Ìø;”Ì@ Ìø<”ÌM ÌøÌI”ÌQ ÌøÌM”ÌU ÌøÌQ”ÌV ÌøÌR”Ì\ ÌøÌX”Ì^ ÌøÌZ’” Ìù” Ìù‘”	 Ìú’” Ìü” Ìü” Ìı” Ìı” Ìı	” Ìı” Ìı”" Ìı”' Ìı#”+ Ìı'”/ Ìı+”5 Ìı1”: Ìı6”Ì@ Ìı<”ÌA Ìı=œ” Ìş” Ìş” Ìş” Ìş”" Ìş”' Ìş!”- Ìş'”1 Ìş+”7 Ìş1”< Ìş6”Ì@ Ìş:”ÌA Ìş;œ” Ìÿ” Ìÿ” Ìÿ” Ìÿ”" Ìÿ”' Ìÿ!”- Ìÿ'”1 Ìÿ+”7 Ìÿ1”< Ìÿ6”ÌC Ìÿ=”ÌD Ìÿ>” Í ” Í ” Í ” Í ”" Í ”' Í !”. Í (”2 Í ,”8 Í 2”= Í 7”ÌC Í =”ÌD Í >”ÌF Í Ì@’” Í” Í‘”	 Í’” Í” Í—” Í” Í” Í	” Í” Í”% Í!”& Í!’” Í” Í’” Í” Í”” Í	” Í	” Í	”# Í	)’” Í
+” Í
+˜” Í” Í” Í	”% Í!”& Í"”/ Í+”0 Í,”1 Í,’” Í” ÍÜ ” Í” Í” Í” Í” Í” Í” Í”  Í”! Í”6 Í2”: Í6”; Í7”? Í;”Ì@ Í<”ÌH ÍÌD”ÌL ÍÌH”ÌM ÍÌI”ÌQ ÍÌM”ÌR ÍÌN”Ì_ ÍÌ[”Ìa ÍÌ]–” Í” Í
+” Í” Í” Í” Í‘”	 Í’” Í” Í’” Í” Í”” Í” Í” Í” Í#—” Í” Í” Í	” Í” Í” Í”  Í—” Í” Í” Í	”" Í”% Í!”* Í&”+ Í&—” Í” Í” Í	” Í” Í” Í” Í—” Í” Í” Í	” Í” Í”" Í”# Í—” Í” Í” Í	” Í” Í” Í” Í—” Í” Í” Í	” Í” Í” Í” Í—” Í” Í” Í	” Í”  Í”' Í#”( Í#—” Í” Í” Í	” Í” Í”& Í"”' Í"Ü ” Í” Í” Í	” Í” Í” Í” Í” Í” Í” Í” Í” Í” Í”  Í”" Í”# Í”$ Í ”& Í"”' Í#”( Í$”* Í&”+ Í'”, Í(”- Í)”. Í)’” Í” Í” Í” Í” Í	” Í” Í” Í” Í” Í” Í” Í” Í” Í”& Í!–” Í ” Í ” Í 	” Í ” Í ” Í Ü ” Í!” Í!” Í!	” Í!” Í!” Í!”" Í!”# Í!”( Í!$”2 Í!.”6 Í!2”7 Í!3”ÌA Í!=”ÌL Í!ÌH”ÌP Í!ÌL”ÌQ Í!ÌM”ÌZ Í!ÌV”Ì^ Í!ÌZ”Ìb Í!Ì^”Ìc Í!Ì_”Ìp Í!Ìl”Ìr Í!Ìn”Ìs Í!Ìn’” Í"” Í"’” Í$” Í$’” Í%” Í%–” Í&” Í&” Í&	” Í&” Í&” Í&Ü ” Í'” Í'” Í'	” Í'” Í'” Í'” Í'” Í'” Í'” Í'” Í'” Í'” Í'”  Í'”" Í'”# Í'”$ Í' ”& Í'"”' Í'#”( Í'$”* Í'&”+ Í''”, Í'(”- Í')”. Í')” Í(” Í(” Í(	” Í(” Í(” Í(” Í(” Í(” Í(” Í(” Í(” Í(”# Í(—” Í)” Í)” Í)	” Í)”  Í)”' Í)#”( Í)#—” Í*” Í*” Í*	” Í*” Í*”& Í*"”' Í*"—” Í+” Í+” Í+	” Í+” Í+” Í+” Í+—” Í,” Í,” Í,	” Í,” Í,”" Í,”# Í,—” Í-” Í-” Í-	” Í-” Í-” Í-” Í-—” Í.” Í.” Í.	” Í.” Í.” Í.” Í.—” Í/” Í/” Í/	” Í/” Í/” Í/” Í/—” Í0” Í0” Í0	” Í0” Í0”# Í0”$ Í0—” Í1” Í1” Í1	”" Í1”% Í1!”) Í1%”* Í1%–” Í2” Í2” Í2	” Í2” Í2” Í2’” Í3” Í3’” Í5” Í5	’” Í6” Í6–” Í7” Í7” Í7	” Í7” Í7” Í7Ü ” Í8” Í8” Í8	” Í8” Í8” Í8” Í8” Í8” Í8” Í8” Í8” Í8” Í8”  Í8”" Í8”# Í8”$ Í8 ”& Í8"”' Í8#”( Í8$”* Í8&”+ Í8'”, Í8(”- Í8)”. Í8)” Í9” Í9” Í9	” Í9” Í9” Í9” Í9” Í9” Í9” Í9” Í9” Í9”# Í9—” Í:” Í:” Í:	” Í:”  Í:”' Í:#”( Í:#—” Í;” Í;” Í;	” Í;” Í;”& Í;"”' Í;"—” Í<” Í<” Í<	” Í<” Í<” Í<” Í<—” Í=” Í=” Í=	” Í=” Í=”" Í=”# Í=—” Í>” Í>” Í>	” Í>” Í>” Í>” Í>—” Í?” Í?” Í?	” Í?” Í?” Í?” Í?—” Í@” Í@” Í@	” Í@” Í@” Í@” Í@—” ÍA” ÍA” ÍA	”" ÍA”% ÍA!”) ÍA%”* ÍA%—” ÍB” ÍB” ÍB	” ÍB” ÍB”# ÍB”$ ÍB–” ÍC” ÍC” ÍC	” ÍC” ÍC” ÍC’” ÍD” ÍD’” ÍF” ÍF
+’” ÍG” ÍG–” ÍH” ÍH” ÍH	” ÍH” ÍH” ÍH˜” ÍI” ÍI” ÍI” ÍI” ÍI” ÍI”  ÍI”" ÍI—” ÍJ” ÍJ
+” ÍJ” ÍJ” ÍJ”  ÍJ”! ÍJ‘”	 ÍKÜ ” ÍL” ÍL” ÍL	” ÍL” ÍL” ÍL” ÍL” ÍL” ÍL” ÍL” ÍL” ÍL” ÍL”  ÍL”" ÍL”# ÍL”$ ÍL ”& ÍL"”' ÍL#”( ÍL$”* ÍL&”+ ÍL'”, ÍL(”- ÍL)”. ÍL)—” ÍM” ÍM” ÍM	” ÍM”  ÍM”' ÍM#”( ÍM#—” ÍN” ÍN” ÍN	” ÍN” ÍN”& ÍN"”' ÍN"—” ÍO” ÍO” ÍO	” ÍO” ÍO” ÍO” ÍO—” ÍP” ÍP” ÍP	” ÍP” ÍP”" ÍP”# ÍP—” ÍQ” ÍQ” ÍQ	” ÍQ” ÍQ” ÍQ” ÍQ—” ÍR” ÍR” ÍR	” ÍR” ÍR” ÍR” ÍR—” ÍS” ÍS” ÍS	”" ÍS”% ÍS!”* ÍS&”+ ÍS&’” ÍT” ÍTš” ÍU” ÍU” ÍU	” ÍU” ÍU” ÍU” ÍU”$ ÍU ”% ÍU!”& ÍU!–” ÍV” ÍV” ÍV	” ÍV” ÍV” ÍVÜ ” ÍW” ÍW” ÍW	” ÍW” ÍW” ÍW”" ÍW”# ÍW”( ÍW$”2 ÍW.”6 ÍW2”7 ÍW3”ÌA ÍW=”ÌL ÍWÌH”ÌP ÍWÌL”ÌQ ÍWÌM”ÌZ ÍWÌV”Ì^ ÍWÌZ”Ìb ÍWÌ^”Ìc ÍWÌ_”Ìp ÍWÌl”Ìr ÍWÌn”Ìs ÍWÌn’” ÍX” ÍX’” ÍZ” ÍZ
+’” Í[” Í[” Í\” Í\” Í\” Í\”& Í\"”* Í\&”. Í\*”/ Í\+”7 Í\3”; Í\7”? Í\;”Ì@ Í\<”ÌM Í\ÌI’” Í\ÌK” Í\ÌQš” Í]” Í]” Í]	” Í]” Í]” Í]” Í]” Í]”" Í]”# Í]’” Í^” Í^’” Í`” Í`”” Ía” Ía” Ía” Ía!”” Íb” Íb” Íb” Íb˜” Íc” Íc” Íc” Íc” Íc”% Íc”( Íc"”) Íc"˜” Íd” Íd” Íd” Íd” Íd”% Íd”( Íd"”) Íd"˜” Íe” Íe” Íe” Íe” Íe”  Íe”# Íe”$ Íe—” Íf” Íf” Íf” Íf” Íf” Íf”  Íf‘”	 Íg’” Íh” Íh’” Íj” Íj”” Ík” Ík” Ík” Ík”” Íl” Íl” Íl” Ílš” Ím” Ím” Ím” Ím” Ím”% Ím”* Ím$”+ Ím%”0 Ím*”1 Ím*š” Ín” Ín” Ín” Ín” Ín”% Ín”* Ín$”+ Ín%”0 Ín*”1 Ín*š” Ío” Ío” Ío” Ío” Ío”  Ío”% Ío”& Ío ”) Ío#”* Ío#™” Íp” Íp” Íp” Íp” Íp”! Íp”" Íp”& Íp ”' Íp ‘”	 Íq’” Ír” Ír’” Ít” Ít”” Íu” Íu” Íu” Íu”” Ív” Ív” Ív” Ívš” Íw” Íw” Íw” Íw” Íw”% Íw”) Íw#”* Íw$”2 Íw,”3 Íw,œ” Íx” Íx” Íx” Íx” Íx”% Íx”) Íx#”* Íx$”2 Íx,”5 Íx/”6 Íx0”7 Íx0š” Íy” Íy” Íy” Íy” Íy”  Íy”$ Íy”% Íy”- Íy'”. Íy'›” Íz” Íz” Íz” Íz” Íz”  Íz”! Íz”) Íz#”, Íz&”- Íz'”. Íz'‘”	 Í{’” Í|” Í|’” Í~” Í~”” Í” Í” Í”" Í(”” Í€” Í€
+” Í€” Í€’” Í” Í’” Í‚” Í‚’” Íƒ” Íƒ’” Í„” Í„’” Í…” Í…’” Í†” Í†’” Í‡” Í‡’” Íˆ” Íˆ’” Í‰” Í‰’” ÍŠ” ÍŠ’”	 Í‹”
+ Í‹™” ÍŒ” ÍŒ” ÍŒ” ÍŒ”! ÍŒ”$ ÍŒ ”% ÍŒ!”& ÍŒ"”' ÍŒ"’” Í” Í’” Í” Í”” Í” Í” Í” Í"•” Í‘” Í‘” Í‘” Í‘” Í‘–” Í‘” Í‘” Í‘ ” Í‘!” Í‘&” Í‘&•” Í’	” Í’” Í’” Í’” Í’–” Í’” Í’ ” Í’%” Í’&” Í’*” Í’*•” Í“	” Í“” Í“” Í“” Í“–” Í“” Í“ ” Í“%” Í“&” Í“,”  Í“,–” Í”	” Í”” Í”” Í”” Í”” Í”’” Í•” Í•’” Í—” Í—’” Í˜” Í˜–” Í™” Í™
+” Í™” Í™” Í™” Í™” Íš” Íš	” Íš” Íš” Íš” Íš” Íš” Íš” Íš” Íš”! Íš”" Íš”$ Íš ”& Íš"˜” Í›” Í›” Í›” Í›” Í›” Í›” Í›” Í›‘”	 Íœ”” Í” Í” Í” Í’” Í” Í‘” Í ’” Í¡” Í¡
+–” Í¡” Í¡
+” Í¬” Í¬
+” Í¬” Í¬–” Í¡” Í¡
+” Í­” Í­” Í­”  Í­˜” Í¡” Í¡
+” Í®” Í®” Í®”- Í®”. Í® ”6 Í®(˜” Í¡” Í¡
+” Í¯” Í¯” Í¯”% Í¯”& Í¯”( Í¯’” Í¢” Í¢–” Í¢” Í¢” Í¦” Í¦” Í¦” Í¦–” Í¢” Í¢” Í§” Í§” Í§” Í§–” Í¢” Í¢” Í¨”" Í¨”# Í¨”+ Í¨˜” Í¢” Í¢” Í©”! Í©”" Í©”+ Í©”, Í© ”1 Í©%˜” Í¢” Í¢” Íª” Íª” Íª”- Íª!”. Íª"”4 Íª(’” Í£” Í£’” Í¤” Í¤’” Í£” Í£–” Í¤” Í¤” Í«	” Í«” Í«” Í«’” Í£” Í£–” Í¤” Í¤” Í¬	” Í¬” Í¬” Í¬–” Í¥
+” Í¥” Í¥” Í¥” Í¥”$ Í¥–” Í¥
+” Í¥” Í¦” Í¦” Í¦” Í¦˜” Í¥
+” Í¥” Í§” Í§” Í§”& Í§"”' Í§#”+ Í§'–” Í¥
+” Í¥” Í¨” Í¨” Í¨” Í¨˜” Í¥
+” Í¥” Í©” Í©” Í©”$ Í© ”% Í©!”+ Í©'’” Í¥
+” Í¥’” Í£” Í£’” Í¤” Í¤’” Í®” Í®–” Í¯” Í¯” Í¯” Í¯” Í¯” Í¯’” Í°
+” Í°–” Í°
+” Í°” ÍÁ”$ ÍÁ”% ÍÁ”+ ÍÁ˜” Í°
+” Í°” ÍÂ”- ÍÂ”. ÍÂ”7 ÍÂ#”8 ÍÂ$”> ÍÂ*˜” Í°
+” Í°” ÍÃ”) ÍÃ”* ÍÃ”9 ÍÃ%”: ÍÃ&”Ì@ ÍÃ,š” Í°
+” Í°” ÍÄ”% ÍÄ”& ÍÄ”( ÍÄ”. ÍÄ”0 ÍÄ”2 ÍÄ”4 ÍÄ ”” Í±” Í±”$ Í±”+ Í±–” Í±” Í±” Í²”% Í²”& Í²”( Í²˜” Í±” Í±” Í³”& Í³”' Í³”, Í³”- Í³”0 Í³"š” Í±” Í±” Í´”# Í´”$ Í´”& Í´”, Í´”. Í´ ”0 Í´"”2 Í´$’” Í±” Í±˜” Í¶” Í¶”$ Í¶”- Í¶”1 Í¶”2 Í¶”7 Í¶$”9 Í¶&–” Í¶” Í¶” Í·”% Í·”& Í·”( Í·š” Í¶” Í¶” Í¸”# Í¸”$ Í¸”& Í¸”, Í¸”. Í¸ ”0 Í¸"”2 Í¸$’” Í¶” Í¶”” Íº” Íº”/ Íº”7 Íºœ” Íº” Íº” Í»”& Í»”' Í»”* Í»”, Í»”- Í»”1 Í»!”2 Í»"”; Í»+”= Í»-˜” Íº” Íº” Í¼”. Í¼”/ Í¼”4 Í¼$”5 Í¼%”9 Í¼)–” Íº” Íº” Í½”$ Í½”% Í½”( Í½–” Íº” Íº” Í¾”% Í¾”& Í¾”( Í¾š” Íº” Íº” Í¿”% Í¿”& Í¿”( Í¿”. Í¿”0 Í¿ ”2 Í¿"”4 Í¿$’” Íº” Íº’” Í°
+” Í°‘” ÍÅ	–” ÍÆ” ÍÆ” ÍÆ” ÍÆ”' ÍÆ#”) ÍÆ%’” ÍÇ
+” ÍÇ–” ÍÇ
+” ÍÇ” Íä”$ Íä”% Íä”+ Íä˜” ÍÇ
+” ÍÇ” Íå”- Íå”. Íå”7 Íå#”8 Íå$”> Íå*˜” ÍÇ
+” ÍÇ” Íæ”) Íæ”* Íæ”9 Íæ%”: Íæ&”Ì@ Íæ,š” ÍÇ
+” ÍÇ” Íç”% Íç”& Íç”( Íç”. Íç”0 Íç”2 Íç”4 Íç ”” ÍÈ” ÍÈ”$ ÍÈ”+ ÍÈ–” ÍÈ” ÍÈ” ÍÉ”% ÍÉ”& ÍÉ”( ÍÉ˜” ÍÈ” ÍÈ” ÍÊ”& ÍÊ”' ÍÊ”, ÍÊ”- ÍÊ”2 ÍÊ$š” ÍÈ” ÍÈ” ÍË”# ÍË”$ ÍË”& ÍË”, ÍË”. ÍË ”0 ÍË"”2 ÍË$’” ÍÈ” ÍÈœ” ÍÍ” ÍÍ”$ ÍÍ”+ ÍÍ”/ ÍÍ”0 ÍÍ”5 ÍÍ"”? ÍÍ,”ÌC ÍÍ0”ÌD ÍÍ1”ÌN ÍÍ;”ÌQ ÍÍ>–” ÍÍ” ÍÍ” ÍÎ”% ÍÎ”& ÍÎ”( ÍÎš” ÍÍ” ÍÍ” ÍÏ”# ÍÏ”$ ÍÏ”& ÍÏ”, ÍÏ”. ÍÏ ”0 ÍÏ"”2 ÍÏ$’” ÍÍ” ÍÍ˜” ÍÑ” ÍÑ”$ ÍÑ”* ÍÑ”. ÍÑ”/ ÍÑ”8 ÍÑ%”> ÍÑ+–” ÍÑ” ÍÑ” ÍÒ”% ÍÒ”& ÍÒ”( ÍÒš” ÍÑ” ÍÑ” ÍÓ”# ÍÓ”$ ÍÓ”& ÍÓ”, ÍÓ”. ÍÓ ”0 ÍÓ"”2 ÍÓ$’” ÍÑ” ÍÑ’” ÍÕ” ÍÕ”” ÍÖ” ÍÖ”/ ÍÖ”6 ÍÖœ” ÍÖ” ÍÖ” Í×”& Í×”' Í×”* Í×”, Í×”- Í×”1 Í×#”2 Í×$”; Í×-”= Í×/˜” ÍÖ” ÍÖ” ÍØ”. ÍØ ”/ ÍØ!”4 ÍØ&”5 ÍØ'”: ÍØ,–” ÍÖ” ÍÖ” ÍÙ”$ ÍÙ”% ÍÙ”( ÍÙ–” ÍÖ” ÍÖ” ÍÚ”% ÍÚ”& ÍÚ”( ÍÚš” ÍÖ” ÍÖ” ÍÛ”% ÍÛ”& ÍÛ”( ÍÛ”- ÍÛ”/ ÍÛ!”1 ÍÛ#”3 ÍÛ%’” ÍÖ” ÍÖ”” Íİ” Íİ”/ Íİ”5 Íİœ” Íİ” Íİ” ÍŞ”& ÍŞ”' ÍŞ”* ÍŞ”, ÍŞ”- ÍŞ”1 ÍŞ#”2 ÍŞ$”ÌK ÍŞ=”ÌM ÍŞ?˜” Íİ” Íİ” Íß”. Íß ”/ Íß!”4 Íß&”5 Íß'”9 Íß+–” Íİ” Íİ” Íà”$ Íà”% Íà”( Íà–” Íİ” Íİ” Íá”% Íá”& Íá”( Íá’” Íİ” Íİ’” ÍÕ” ÍÕ’” ÍÇ
+” ÍÇ‘” Íè	–” Íé” Íé” Íé” Íé”/ Íé+”1 Íé-’” Íê
+” Íê’” Íë
+” Íë’” Íê
+” Íê–” Íë
+” Íë” Í”$ Í”% Í”+ Í’” Íê
+” Íê–” Íë
+” Íë” Í”& Í”' Í”) Í’” Íê
+” Íêš” Íë
+” Íë” Í”% Í”& Í”( Í”. Í”0 Í”2 Í”4 Í ”” Íì” Íì”$ Íì”- Íì–” Íì” Íì” Íí”% Íí”& Íí”( Íí˜” Íì” Íì” Íî”' Íî”( Íî”2 Íî$”3 Íî%”7 Íî)š” Íì” Íì” Íï”# Íï”$ Íï”& Íï”, Íï”. Íï ”0 Íï"”2 Íï$˜” Íì” Íì” Íğ”& Íğ”' Íğ”, Íğ”- Íğ”1 Íğ#’” Íì” Íì”” Íò” Íò”$ Íò”0 Íò–” Íò” Íò” Íó”% Íó”& Íó”( Íó˜” Íò” Íò” Íô”& Íô”' Íô”, Íô”- Íô”1 Íô#š” Íò” Íò” Íõ”# Íõ”$ Íõ”& Íõ”, Íõ”. Íõ ”0 Íõ"”2 Íõ$’” Íò” Íò’” Í÷” Í÷”  Íø”& Íø”7 Íø”: Íø”? Íø”ÌF Íø$”ÌJ Íø(”ÌK Íø)”Ìc ÍøÌA”Ìd ÍøÌB”Ìi ÍøÌG”Ìj ÍøÌH”Ìl ÍøÌJ”  Íø”& Íø”' Íù”. Íù”/ Íù”2 Íù”4 Íù”5 Íù”9 Íù#”: Íù$”ÌM Íù7”ÌN Íù8”ÌS Íù=”ÌT Íù>›”  Íø”& Íø”' Íú”6 Íú ”7 Íú!”; Íú%”< Íú&”ÌN Íú8”ÌO Íú9”ÌT Íú>”ÌU Íú?˜”  Íø”& Íø”' Íû”0 Íû”1 Íû”6 Íû ”7 Íû!”< Íû&–”  Íø”& Íø”' Íü”, Íü”- Íü”2 Íü–”  Íø”& Íø”' Íı”- Íı”. Íı”0 Íıš”  Íø”& Íø”' Íş”- Íş”. Íş”0 Íş”6 Íş ”8 Íş"”9 Íş#”; Íş%’” Íø”" Íø•”; Í÷”? Í÷”Ì@ Í÷”ÌS Í÷,”ÌU Í÷.’” Í÷” Í÷˜” Í” Í”$ Í”- Í”1 Í”2 Í”< Í)”? Í,–” Í” Í” Í”% Í”& Í”( Íš” Í” Í” Í”# Í”$ Í”& Í”) Í”+ Í”- Í”/ Í!˜” Í” Í” Í”& Í”' Í”, Í”- Í”2 Í$’” Í” Í’” Íê
+” Íê’” Íë
+” Íë‘” Í		–” Í
+” Í
+” Í
+” Í
+”  Í
+”" Í
+”” Í
+” Í”$ Í”* Í–” Í
+” Í” Í”% Í”& Í”( Í˜” Í
+” Í” Í”& Í”' Í”, Í”- Í”3 Í#š” Í
+” Í” Í”# Í”$ Í”& Í”, Í”. Í”0 Í ”2 Í"–” Í
+” Í” Í”" Í”# Í”) Í˜” Í
+” Í” Í”& Í”' Í”0 Í ”1 Í!”7 Í'’” Í
+” Í‘” Í	’” Í” Í‘” Í	’” Í” ÍÜ ” Í” Í” Í” Í” Í”+ Í'”/ Í+”0 Í,”4 Í0”5 Í1”= Í9”ÌA Í=”ÌB Í>”ÌF ÍÌB”ÌG ÍÌC”ÌT ÍÌP”ÌV ÍÌR’” Í
+” Í’” Í”  Í’” Í” Í’” Í”  Í–” Í” Í” Í!”! Í!”" Í!”( Í!’” Í”  Íš” Í” Í” Í"”" Í"”# Í"”% Í"”+ Í"”- Í"”. Í"”0 Í"!˜” Í” Í”$ Í”+ Í”/ Í”0 Í”5 Í$”7 Í&–” Í” Í” Í”% Í”& Í”( Í˜” Í” Í” Í”& Í”' Í”, Í ”- Í!”1 Í%–” Í” Í” Í”) Í”* Í”+ Í’” Í” Í˜” Í” Í”$ Í”+ Í”/ Í”0 Í”: Í)”= Í,–” Í” Í” Í”% Í”& Í”( Í” Í” Í” Í”& Í”' Í”+ Í”, Í ”> Í2”? Í3”ÌC Í7”ÌD Í8”ÌN ÍÌB”ÌO ÍÌC’” Í” Í’” Í” Í’” Í” Í’” Í$” Í$–” Í$” Í$” Í.”! Í.”" Í.”( Í.š” Í$” Í$” Í/”" Í/”# Í/”% Í/”+ Í/”- Í/”/ Í/ ”1 Í/"œ” Í%” Í%”$ Í%”+ Í%”/ Í%”0 Í%”9 Í%(”= Í%,”ÌA Í%0”ÌB Í%1”ÌO Í%>”ÌQ Í%Ì@–” Í%” Í%” Í&”% Í&”& Í&”( Í&˜” Í%” Í%” Í'”& Í'”' Í'”, Í' ”- Í'!”0 Í'$–” Í%” Í%” Í(”) Í(”* Í(”+ Í(’” Í%” Í%Ü ” Í*” Í*”$ Í*”+ Í*”/ Í*”0 Í*”: Í*)”> Í*-”? Í*.”Ì@ Í*/”ÌA Í*0”ÌB Í*1”ÌF Í*5”ÌG Í*6”ÌH Í*7”ÌI Í*8”ÌN Í*=”ÌP Í*?–” Í*” Í*” Í+”% Í+”& Í+”( Í+–” Í*” Í*” Í,”& Í,”' Í,”/ Í,#’” Í*” Í*’” Í$” Í$’” Í1”$ Í1’” Í2” Í2’” Í1”$ Í1Ü ” Í2” Í2” Í@”% Í@”& Í@”( Í@”- Í@”/ Í@”0 Í@”2 Í@ ”7 Í@%”9 Í@'”> Í@,”? Í@-”ÌD Í@2”ÌF Í@4’” Í1”$ Í1˜” Í2” Í2” ÍA”. ÍA”/ ÍA”4 ÍA"”5 ÍA#”: ÍA(’” Í1”$ Í1–” Í2” Í2” ÍB”& ÍB”' ÍB”( ÍB’” Í1”$ Í1š” Í2” Í2” ÍC”% ÍC”& ÍC”( ÍC”. ÍC”0 ÍC”2 ÍC ”4 ÍC"’” Í3” Í3’”  Í4”# Í4’”  Í5”' Í5™”( Í6”, Í6”4 Í6”8 Í6”9 Í6”ÌG Í6,”ÌH Í6-”ÌP Í65”ÌQ Í66›”( Í6”, Í6”- Í7”5 Í7”6 Í7 ”: Í7$”; Í7%”ÌF Í70”ÌG Í71”ÌO Í79”ÌP Í7:›”( Í6”, Í6”- Í8”6 Í8 ”7 Í8!”; Í8%”< Í8&”ÌH Í82”ÌI Í83”ÌQ Í8;”ÌR Í8<˜”( Í6”, Í6”- Í9”2 Í9”3 Í9”7 Í9!”8 Í9"”Ì@ Í9*˜”( Í6”, Í6”- Í:”3 Í:”4 Í:”8 Í:"”9 Í:#”ÌA Í:+˜”( Í6”, Í6”- Í;”6 Í; ”7 Í;!”Ì@ Í;*”ÌA Í;+”ÌG Í;1’”$ Í6”( Í6’”ÌC Í5”ÌJ Í5!’” Í5”# Í5’” Í4” Í4””; Í3”? Í3”Ì@ Í3”ÌH Í3#’” Í3” Í3’” Í1”  Í1’” Í2” Í2’” ÍE” ÍE’” ÍF” ÍF’” ÍE” ÍEš” ÍF” ÍF” Ís”% Ís”& Ís”( Ís”. Ís”0 Ís”2 Ís ”4 Ís"’” ÍG” ÍG’” ÍH” ÍH’” ÍG” ÍG˜” ÍH” ÍH” ÍR”* ÍR”+ ÍR”4 ÍR'”5 ÍR(”; ÍR.”” ÍI” ÍI”/ ÍI”2 ÍI” ÍI” ÍI” ÍJ”& ÍJ”' ÍJ”* ÍJ”, ÍJ ”- ÍJ!”1 ÍJ%”2 ÍJ&”ÌG ÍJ;”ÌH ÍJ<”ÌL ÍJÌ@”ÌM ÍJÌA–” ÍI” ÍI” ÍK”$ ÍK”% ÍK”' ÍK–” ÍI” ÍI” ÍL”% ÍL”& ÍL”( ÍL–” ÍI” ÍI” ÍM”. ÍM"”/ ÍM#”7 ÍM+˜” ÍI” ÍI” ÍN”( ÍN”) ÍN”. ÍN"”/ ÍN#”4 ÍN(–” ÍI” ÍI” ÍO”' ÍO”( ÍO”* ÍOš” ÍI” ÍI” ÍP”% ÍP”& ÍP”( ÍP”. ÍP"”0 ÍP$”1 ÍP%”3 ÍP'’” ÍI” ÍI’” ÍG” ÍG’” ÍH” ÍH’” ÍT”# ÍT’” ÍU” ÍU’” ÍT”# ÍT˜” ÍU” ÍU” Íp”* Íp”+ Íp”4 Íp'”5 Íp(”; Íp.’” ÍT”# ÍTš” ÍU” ÍU” Íq”" Íq”# Íq”% Íq”( Íq”* Íq”+ Íq”- Íq ”” ÍV” ÍV”/ ÍV”2 ÍV” ÍV” ÍV” ÍW”& ÍW”' ÍW”* ÍW”, ÍW ”- ÍW!”1 ÍW%”2 ÍW&”ÌG ÍW;”ÌH ÍW<”ÌN ÍWÌB”ÌO ÍWÌC–” ÍV” ÍV” ÍX”$ ÍX”% ÍX”' ÍX–” ÍV” ÍV” ÍY”% ÍY”& ÍY”( ÍY–” ÍV” ÍV” ÍZ”. ÍZ"”/ ÍZ#”7 ÍZ+˜” ÍV” ÍV” Í[”( Í[”) Í[”. Í["”/ Í[#”4 Í[(–” ÍV” ÍV” Í\”' Í\”( Í\”* Í\š” ÍV” ÍV” Í]”% Í]”& Í]”( Í]”- Í]!”/ Í]#”1 Í]%”3 Í]'’” ÍV” ÍV”” Í_” Í_”/ Í_”2 Í_” Í_” Í_” Í`”& Í`”' Í`”* Í`”, Í` ”- Í`!”1 Í`%”2 Í`&”ÌG Í`;”ÌH Í`<”ÌN Í`ÌB”ÌO Í`ÌC–” Í_” Í_” Ía”$ Ía”% Ía”' Ía–” Í_” Í_” Íb”% Íb”& Íb”( Íb–” Í_” Í_” Íc”. Íc"”/ Íc#”7 Íc+˜” Í_” Í_” Íd”( Íd”) Íd”. Íd"”/ Íd#”4 Íd(–” Í_” Í_” Íe”' Íe”( Íe”* Íeš” Í_” Í_” Íf”% Íf”& Íf”( Íf”- Íf!”/ Íf#”1 Íf%”3 Íf'’” Í_” Í_”” Íh” Íh”/ Íh”2 Íh” Íh” Íh” Íi”& Íi”' Íi”* Íi”, Íi ”- Íi!”1 Íi%”2 Íi&”ÌG Íi;”ÌH Íi<”ÌO ÍiÌC”ÌP ÍiÌD–” Íh” Íh” Íj”$ Íj”% Íj”' Íj–” Íh” Íh” Ík”% Ík”& Ík”( Ík–” Íh” Íh” Íl”. Íl"”/ Íl#”7 Íl+˜” Íh” Íh” Ím”( Ím”) Ím”. Ím"”/ Ím#”4 Ím(–” Íh” Íh” Ín”' Ín”( Ín”* Ín’” Íh” Íh’” ÍT” ÍT’” ÍU” ÍU’” ÍE” ÍE’” ÍF” ÍF’” Íu” Íu’” Ív” Ív’” Íu” Íuš” Ív” Ív” Í…”" Í…”# Í…”% Í…”+ Í…”- Í…”/ Í… ”1 Í…"” Íw” Íw”/ Íw”3 Íw”4 Íw”: Íw ”; Íw!”< Íw"”= Íw#”ÌA Íw'”ÌB Íw(”ÌC Íw)”ÌD Íw*”ÌH Íw.œ” Íw” Íw” Íx”& Íx”' Íx”* Íx”, Íx”- Íx”1 Íx#”2 Íx$”= Íx/”? Íx1Ü ” Íw” Íw” Íy”. Íy ”/ Íy!”3 Íy%”4 Íy&”: Íy,”; Íy-”< Íy.”= Íy/”ÌB Íy4”ÌC Íy5”ÌH Íy:”ÌI Íy;”ÌJ Íy<”ÌK Íy=”ÌP ÍyÌB”ÌQ ÍyÌC”ÌW ÍyÌI–” Íw” Íw” Íz”$ Íz”% Íz”( Íz–” Íw” Íw” Í{”% Í{”& Í{”( Í{š” Íw” Íw” Í|”% Í|”& Í|”( Í|”- Í|”/ Í|!”1 Í|#”3 Í|%’” Íw” Íw”” Í~” Í~”/ Í~”5 Í~œ” Í~” Í~” Í”& Í”' Í”* Í”, Í”- Í”1 Í#”2 Í$”ÌK Í=”ÌM Í?–” Í~” Í~” Í€”. Í€ ”/ Í€!”7 Í€)˜” Í~” Í~” Í”( Í”) Í”. Í ”/ Í!”4 Í&–” Í~” Í~” Í‚”$ Í‚”% Í‚”( Í‚–” Í~” Í~” Íƒ”% Íƒ”& Íƒ”( Íƒ’” Í~” Í~’” Íu” Íu’” Ív” Ív’” Í
+” Í‘” Í‡	’” Í‰” Í‰‘” Í‡	’” Í‰” Í‰’” ÍŠ” ÍŠ’” Í‰” Í‰” ÍŠ” ÍŠ” Í 	” Í ” Í ” Í ” Í ”! Í ”# Í ”% Í ”+ Í !”- Í #”/ Í %”1 Í '’” Í‰” Í‰–” ÍŠ” ÍŠ” Í¡	” Í¡” Í¡” Í¡’” Í‰” Í‰Ü ” ÍŠ” ÍŠ” Í¢	” Í¢” Í¢” Í¢”! Í¢”# Í¢”$ Í¢”& Í¢”+ Í¢!”- Í¢#”2 Í¢(”3 Í¢)”7 Í¢-”9 Í¢/’” Í‰” Í‰–” ÍŠ” ÍŠ” Í£	” Í£” Í£” Í£’” Í‰” Í‰˜” ÍŠ” ÍŠ” Í¤	” Í¤” Í¤”& Í¤”' Í¤”- Í¤#”” Í‹
+” Í‹” Í‹” Í‹–” Í‹
+” Í‹” ÍŒ” ÍŒ” ÍŒ” ÍŒ˜” Í‹
+” Í‹” Í” Í” Í”& Í"”' Í#”+ Í'š” Í‹
+” Í‹” Í” Í” Í” Í”  Í”" Í”# Í”% Í!’” Í‹
+” Í‹”” Í
+” Í” Í”' Í–” Í
+” Í” Í‘” Í‘” Í‘” Í‘˜” Í
+” Í” Í’” Í’” Í’”  Í’”! Í’”% Í’!’” Í
+” Í”” Í”
+” Í”” Í””+ Í”"–” Í”
+” Í”” Í•” Í•” Í•” Í•˜” Í”
+” Í”” Í–” Í–” Í–”  Í–”! Í–”% Í–!’” Í”
+” Í””” Í˜
+” Í˜” Í˜”/ Í˜&–” Í˜
+” Í˜” Í™” Í™” Í™” Í™˜” Í˜
+” Í˜” Íš” Íš” Íš”  Íš”! Íš”% Íš!’” Í˜
+” Í˜”” Íœ
+” Íœ” Íœ”/ Íœ&–” Íœ
+” Íœ” Í” Í” Í” Í˜” Íœ
+” Íœ” Í” Í” Í”  Í”! Í”% Í!’” Íœ
+” Íœ’” Í‰” Í‰’” ÍŠ” ÍŠ’” Í¢” Í¢’” Í¡” Í¡
+‘” Í°ÔrD–§version¤file§sources®sourcesContent¥names¨mappingsÀ‘À‘ÀÜ‘”    ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”  	 ‘”  
+ ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”    ‘”  ! ‘”  " ‘”  # ‘”  $ ‘”  % ‘”  & ‘”  ' ‘”  ( ‘”  ) ‘”  * ‘”  + ‘”  , ‘”  - ‘”  . ‘”  / ‘”  0 ‘”  1 ‘”  2 ‘”  3 ‘”  4 ‘”  5 ‘”  6 ‘”  7 ‘”  8 ‘”  9 ‘”  : ‘”  ; ‘”  < ‘”  = ‘”  > ‘”  ? ‘”  Ì@ ‘”  ÌA ‘”  ÌB ‘”  ÌC ‘”  ÌD ‘”  ÌE ‘”  ÌF ‘”  ÌG ‘”  ÌH ‘”  ÌI ‘”  ÌJ ‘”  ÌK ‘”  ÌL ‘”  ÌM ‘”  ÌN ‘”  ÌO ‘”  ÌP ‘”  ÌQ ‘”  ÌR ‘”  ÌS ‘”  ÌT ‘”  ÌU ‘”  ÌV ‘”  ÌW ‘”  ÌX ‘”  ÌY ‘”  ÌZ ‘”  Ì[ ‘”  Ì\ ‘”  Ì] ‘”  Ì^ ‘”  Ì_ ‘”  Ì` ‘”  Ìa ‘”  Ìb ‘”  Ìc ‘”  Ìd ‘”  Ìe ‘”  Ìf ‘”  Ìg ‘”  Ìh ‘”  Ìi ‘”  Ìj ‘”  Ìk ‘”  Ìl ‘”  Ìm ‘”  Ìn ‘”  Ìo ‘”  Ìp ‘”  Ìq ‘”  Ìr ‘”  Ìs ‘”  Ìt ‘”  Ìu ‘”  Ìv ‘”  Ìw ‘”  Ìx ‘”  Ìy ‘”  Ìz ‘”  Ì{ ‘”  Ì| ‘”  Ì} ‘”  Ì~ ‘”  Ì ‘”  Ì€ ‘”  Ì ‘”  Ì‚ ‘”  Ìƒ ‘”  Ì„ ‘”  Ì… ‘”  Ì† ‘”  Ì‡ ‘”  Ìˆ ‘”  Ì‰ ‘”  ÌŠ ‘”  Ì‹ ‘”  ÌŒ ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì‘ ‘”  Ì’ ‘”  Ì“ ‘”  Ì” ‘”  Ì• ‘”  Ì– ‘”  Ì— ‘”  Ì˜ ‘”  Ì™ ‘”  Ìš ‘”  Ì› ‘”  Ìœ ‘”  Ì ‘”  Ì ‘”  ÌŸ ‘”  Ì  ‘”  Ì¡ ‘”  Ì¢ ‘”  Ì£ ‘”  Ì¤ ‘”  Ì¥ ‘”  Ì¦ ‘”  Ì§ ‘”  Ì¨ ‘”  Ì© ‘”  Ìª ‘”  Ì« ‘”  Ì¬ ‘”  Ì­ ‘”  Ì® ‘”  Ì¯ ‘”  Ì° ‘”  Ì± ‘”  Ì² ‘”  Ì³ ‘”  Ì´ ‘”  Ìµ ‘”  Ì¶ ‘”  Ì· ‘”  Ì¸ ‘”  Ì¹ ‘”  Ìº ‘”  Ì» ‘”  Ì¼ ‘”  Ì½ ‘”  Ì¾ ‘”  Ì¿ ‘”  ÌÀ ‘”  ÌÁ ‘”  ÌÂ ‘”  ÌÃ ‘”  ÌÄ ‘”  ÌÅ ‘”  ÌÆ ‘”  ÌÇ ‘”  ÌÈ ‘”  ÌÉ ‘”  ÌÊ ‘”  ÌË ‘”  ÌÌ ‘”  ÌÍ ‘”  ÌÎ ‘”  ÌÏ ‘”  ÌĞ ‘”  ÌÑ ‘”  ÌÒ ‘”  ÌÓ ‘”  ÌÔ ‘”  ÌÕ ‘”  ÌÖ ‘”  Ì× ‘”  ÌØ ‘”  ÌÙ ‘”  ÌÚ ‘”  ÌÛ ‘”  ÌÜ ‘”  Ìİ ‘”  ÌŞ ‘”  Ìß ‘”  Ìà ‘”  Ìá ‘”  Ìâ ‘”  Ìã ‘”  Ìä ‘”  Ìå ‘”  Ìæ ‘”  Ìç ‘”  Ìè ‘”  Ìé ‘”  Ìê ‘”  Ìë ‘”  Ìì ‘”  Ìí ‘”  Ìî ‘”  Ìï ‘”  Ìğ ‘”  Ìñ ‘”  Ìò ‘”  Ìó ‘”  Ìô ‘”  Ìõ ‘”  Ìö ‘”  Ì÷ ‘”  Ìø ‘”  Ìù ‘”  Ìú ‘”  Ìû ‘”  Ìü ‘”  Ìı ‘”  Ìş ‘”  Ìÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ÂÔ  ÔrE”²dynamicImportCache¹exportAllDeclarationCache»exportNamedDeclarationCache«importCache
